@@ -1,0 +1,202 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.0
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: May 13, 2024 at 08:26 PM
+-- Server version: 10.4.27-MariaDB
+-- PHP Version: 8.2.0
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `member-management`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `thanhvien`
+--
+
+CREATE TABLE `thanhvien` (
+  `MaTV` int(10) NOT NULL,
+  `HoTen` varchar(100) NOT NULL,
+  `Khoa` varchar(100) DEFAULT NULL,
+  `Nganh` varchar(100) DEFAULT NULL,
+  `SDT` varchar(15) DEFAULT NULL,
+  `Password` varchar(10) NOT NULL,
+  `Email` varchar(25) DEFAULT NULL,
+  `ho_ten` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `thanhvien`
+--
+
+INSERT INTO `thanhvien` (`MaTV`, `HoTen`, `Khoa`, `Nganh`, `SDT`, `Password`, `Email`, `ho_ten`) VALUES
+(1120150184, 'Trần Thị Nữ', 'GDTH', 'GDTH', '1111111111', '', NULL, NULL),
+(1121530087, 'Trần Thiếu Nam', 'TLH', 'QLGD', '1111111112', '', NULL, NULL),
+(1123330257, 'Ngô Tuyết Nhi', 'QTKD', 'QTKD', '1111111113', '', NULL, NULL),
+(2147483647, 'Nguyễn Văn Nam', 'CNTT', 'HTTT', '123456789', '', NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `thietbi`
+--
+
+CREATE TABLE `thietbi` (
+  `MaTB` int(10) NOT NULL,
+  `TenTB` varchar(100) NOT NULL,
+  `MoTaTB` text DEFAULT NULL,
+  `hinhanhtb` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `thietbi`
+--
+
+INSERT INTO `thietbi` (`MaTB`, `TenTB`, `MoTaTB`, `hinhanhtb`) VALUES
+(120191, 'Micro không dây 01', 'JBL VM 2001', NULL),
+(120192, 'Micro có dây 01', 'MCCD 1001', NULL),
+(120203, 'Micro không dây 02', 'BCE 9001', NULL),
+(120214, 'Micro không dây 03', 'M3001', NULL),
+(120235, 'Micro không dây 03', 'BCE UGX12', NULL),
+(320201, 'Máy ảnh Fuji', 'FJ 20201', NULL),
+(320242, 'Máy ảnh Canon', 'CAN2024', NULL),
+(420201, 'Cassette Sony', 'CN 20201', NULL),
+(420212, 'Cassette Sony', 'CN 20211', NULL),
+(420213, 'Cassette TQ', 'CSTQ 20211', NULL),
+(420224, 'Cassette Sony', 'CS 20221', NULL),
+(420236, 'Cassette Sony', 'CS 2023', NULL),
+(520221, 'Tivi LG', 'TVLG021', NULL),
+(520222, 'Tivi Samsung', 'TVSS20221', NULL),
+(620231, 'Quạt đứng', 'QD 20231', NULL),
+(620232, 'Quạt đứng', 'QD 20232', NULL),
+(620233, 'Quạt đứng', 'QD 20233', NULL),
+(620234, 'Quạt đứng', 'QD 20234', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `thongtinsd`
+--
+
+CREATE TABLE `thongtinsd` (
+  `MaTB` int(11) DEFAULT NULL,
+  `MaTT` int(11) NOT NULL,
+  `MaTV` int(11) DEFAULT NULL,
+  `TGMuon` datetime(6) DEFAULT NULL,
+  `TGTra` datetime(6) DEFAULT NULL,
+  `TGDatcho` datetime(6) DEFAULT NULL,
+  `TGVao` datetime(6) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `xuly`
+--
+
+CREATE TABLE `xuly` (
+  `MaTV` int(11) DEFAULT NULL,
+  `MaXL` int(11) NOT NULL,
+  `SoTien` double NOT NULL,
+  `TrangThaiXL` int(11) NOT NULL,
+  `NgayXL` datetime(6) DEFAULT NULL,
+  `HinhThucXL` varchar(255) DEFAULT NULL,
+  `hinh_thucxl` varchar(255) DEFAULT NULL,
+  `so_tien` double DEFAULT NULL,
+  `trang_thaixl` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `xuly`
+--
+
+INSERT INTO `xuly` (`MaTV`, `MaXL`, `SoTien`, `TrangThaiXL`, `NgayXL`, `HinhThucXL`, `hinh_thucxl`, `so_tien`, `trang_thaixl`) VALUES
+(1123330257, 1111, 300000, 1, '2024-04-01 19:25:57.000000', 'đóng phạt', NULL, NULL, NULL),
+(2147483647, 2222, 200000, 0, '2024-04-03 19:25:57.000000', 'Đóng phạt', NULL, NULL, NULL),
+(1120150184, 2225, 0, 0, '2024-04-03 22:46:57.000000', 'cảnh cáo', NULL, NULL, NULL),
+(1121530087, 2226, 50000, 1, '2024-04-08 22:51:30.000000', 'đóng phạt', NULL, NULL, NULL),
+(1120150184, 2227, 0, 0, '2024-04-01 23:10:59.000000', 'cảnh cáo', NULL, NULL, NULL),
+(1123330257, 2228, 0, 1, '2024-04-02 00:00:00.000000', 'cảnh cáo', NULL, NULL, NULL);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `thanhvien`
+--
+ALTER TABLE `thanhvien`
+  ADD PRIMARY KEY (`MaTV`),
+  ADD UNIQUE KEY `UK_mj6iyyblc7l1550a6e1dq17li` (`SDT`);
+
+--
+-- Indexes for table `thietbi`
+--
+ALTER TABLE `thietbi`
+  ADD PRIMARY KEY (`MaTB`);
+
+--
+-- Indexes for table `thongtinsd`
+--
+ALTER TABLE `thongtinsd`
+  ADD PRIMARY KEY (`MaTT`),
+  ADD KEY `FKfigww5ottle5lbxah5c5kbyvk` (`MaTV`),
+  ADD KEY `FKeu4vojqyrkh768sodsxti4rp7` (`MaTB`);
+
+--
+-- Indexes for table `xuly`
+--
+ALTER TABLE `xuly`
+  ADD PRIMARY KEY (`MaXL`),
+  ADD KEY `FKa0dgbfa4l5gv4vtgvbnf44o1p` (`MaTV`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `thongtinsd`
+--
+ALTER TABLE `thongtinsd`
+  MODIFY `MaTT` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `xuly`
+--
+ALTER TABLE `xuly`
+  MODIFY `MaXL` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2230;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `thongtinsd`
+--
+ALTER TABLE `thongtinsd`
+  ADD CONSTRAINT `FKeu4vojqyrkh768sodsxti4rp7` FOREIGN KEY (`MaTB`) REFERENCES `thietbi` (`MaTB`),
+  ADD CONSTRAINT `FKfigww5ottle5lbxah5c5kbyvk` FOREIGN KEY (`MaTV`) REFERENCES `thanhvien` (`MaTV`);
+
+--
+-- Constraints for table `xuly`
+--
+ALTER TABLE `xuly`
+  ADD CONSTRAINT `FKa0dgbfa4l5gv4vtgvbnf44o1p` FOREIGN KEY (`MaTV`) REFERENCES `thanhvien` (`MaTV`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
