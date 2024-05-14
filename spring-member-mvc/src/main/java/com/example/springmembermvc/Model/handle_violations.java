@@ -38,25 +38,7 @@ public class handle_violations {
     @JoinColumn(name = "MaTV")
     private member thanhvien;
     
-    
-    public handle_violations(int MaXL, int MaTV, String HinhThucXL, double SoTien, Date NgayXL, int TrangThaiXL) {
-        this.MaXL = MaXL;
-        this.HinhThucXL = HinhThucXL;
-        this.SoTien = SoTien;
-        this.NgayXL = NgayXL;
-        this.TrangThaiXL = TrangThaiXL;
-    }
-    
     public handle_violations(member thanhvien, String HinhThucXL, double SoTien, Date NgayXL, int TrangThaiXL) {
-        this.thanhvien = thanhvien;
-        this.HinhThucXL = HinhThucXL;
-        this.SoTien = SoTien;
-        this.NgayXL = NgayXL;
-        this.TrangThaiXL = TrangThaiXL;
-    }
-    
-    public handle_violations(int MaXL, member thanhvien, String HinhThucXL, double SoTien, Date NgayXL, int TrangThaiXL) {
-        this.MaXL = MaXL;
         this.thanhvien = thanhvien;
         this.HinhThucXL = HinhThucXL;
         this.SoTien = SoTien;
@@ -66,53 +48,5 @@ public class handle_violations {
 
 
     public handle_violations() {
-    }
-
-    public int getMaXL() {
-        return MaXL;
-    }
-
-    public void setMaXL(int maXL) {
-        MaXL = maXL;
-    }
-
-    public String getHinhThucXL() {
-        return HinhThucXL;
-    }
-
-    public void setHinhThucXL(String hinhThucXL) {
-        HinhThucXL = hinhThucXL;
-    }
-
-    public double getSoTien() {
-        return SoTien;
-    }
-
-    public void setSoTien(double soTien) {
-        SoTien = soTien;
-    }
-
-    public Date getNgayXL() {
-        return NgayXL;
-    }
-
-    public void setNgayXL(Date ngayXL) {
-        NgayXL = ngayXL;
-    }
-
-    public int getTrangThaiXL() {
-        return TrangThaiXL;
-    }
-
-    public void setTrangThaiXL(int trangThaiXL) {
-        TrangThaiXL = trangThaiXL;
-    }
-
-    public member getThanhvien() {
-        return thanhvien;
-    }
-
-    public void setThanhvien(member thanhvien) {
-        this.thanhvien = thanhvien;
     }
 }
