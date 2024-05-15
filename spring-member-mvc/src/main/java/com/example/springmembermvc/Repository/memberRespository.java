@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface memberRespository extends JpaRepository<memberEntity, Integer> {
 //    @Query("SELECT m FROM member m WHERE m.MaTV = :MaTV")
@@ -22,5 +24,8 @@ public interface memberRespository extends JpaRepository<memberEntity, Integer> 
 //    boolean existsByEmail(@Param("Email") String Email);
 
     boolean existsByEmail(String Email);
+
+    @Query("SELECT DISTINCT m.Khoa FROM memberEntity m")
+    List<String> findAllDepartments();
 }
 

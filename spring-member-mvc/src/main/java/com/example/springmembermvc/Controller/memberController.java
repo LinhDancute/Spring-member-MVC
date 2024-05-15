@@ -1,9 +1,8 @@
 package com.example.springmembermvc.Controller;
 
 import com.example.springmembermvc.Mapper.memberMapper;
-import com.example.springmembermvc.Model.DTO.member.memberLoginDTO;
-import com.example.springmembermvc.Model.DTO.member.memberRegisterDTO;
-import com.example.springmembermvc.Model.DTO.member.memberDTO;
+import com.example.springmembermvc.Model.DTO.member.*;
+import com.example.springmembermvc.Model.Entity.*;
 import com.example.springmembermvc.Repository.memberRespository;
 import com.example.springmembermvc.Service.memberService;
 import jakarta.servlet.http.HttpSession;
@@ -15,6 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class memberController {
@@ -54,6 +56,14 @@ public class memberController {
         return "auth/register";
     }
 
+    private List<memberEntity> department = new ArrayList<>();
+
+    @ModelAttribute("department")
+    public List<memberEntity> getDepartment() {
+        return department;
+    }
+
+    //LOGIN
     @PostMapping("/login_post")
     public String login(@ModelAttribute("login_request") memberLoginDTO login,
                         BindingResult result,
@@ -78,6 +88,7 @@ public class memberController {
         }
     }
 
+    //REGISTER
     @PostMapping("/register_post")
     public String register(
             @Valid @ModelAttribute("register_request") memberRegisterDTO register,
@@ -86,19 +97,37 @@ public class memberController {
     ) {
         if (result.hasErrors()) {
             return "redirect:/register_get";
-        }else if (memberService.existById(register.getMaTV())) {
+        }else if (memberService.existById(register.getMaTV())) {            //check MSSV existed
             redirectAttributes.addAttribute("existedMSSV", "true");
             redirectAttributes.addFlashAttribute("register", register);
             return "redirect:/register_get";
-        } else if (memberService.existByEmail(register.getEmail())) {
+        } else if (memberService.existByEmail(register.getEmail())) {       //check email existed
             redirectAttributes.addAttribute("existedEmail", "true");
             redirectAttributes.addFlashAttribute("register", register);
             return "redirect:/register_get";
         }
 
+        //login success
         memberService.register(register);
         redirectAttributes.addAttribute("successRegister", "true");
         redirectAttributes.addFlashAttribute("register", register);
         return "redirect:/login_get";
+    }
+
+    //UPDATE
+    @PostMapping("/edit-profile")
+    public String update(
+            @Valid @ModelAttribute memberUpdateDTO updateMember,
+            BindingResult result,
+            RedirectAttributes redirectAttributes
+    ){
+        if (result.hasErrors()) {
+            return "redirect:/index";
+        }
+
+        memberService.update(updateMember);
+        redirectAttributes.addAttribute("successUpdateMember", "true");
+        redirectAttributes.addFlashAttribute("update", updateMember);
+        return "redirect:/index";
     }
 }

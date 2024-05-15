@@ -52,7 +52,7 @@
                     </form>
                     <ul class="navbar-nav">
                         <li class="nav-item pe-3" th:if="${session.login_response != null}">
-                            <a class="nav-link" href="#">
+                            <a id="member" type="submit" class="nav-link">
                                 <i class="bi bi-person-fill"></i>
                                 <span th:text="${session.login_response.hoTen}"></span>
                             </a>
@@ -90,14 +90,11 @@
                     <div class="col mb-5" th:each="device : ${devices}">
                         <div class="card h-100">
                             <!-- Product image-->
-                            <img class="card-img-top" th:src="${device.hinhanhTB}" alt="..." />
+                            <img class="card-img-top" th:src="${device.hinhanhTB}" />
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder" th:text="${device.tenTB}">Device Name</h5>
-                                    <!-- Product price-->
-<!--                                    <span th:text="200000"></span>-->
+                                    <h5 class="fw-bolder" th:text="${device.tenTB}">Tên thiết bị</h5>
                                 </div>
                             </div>
                             <!-- Product actions-->
@@ -173,8 +170,6 @@
                         </div>
                     </div>
 
-
-
                     <div class="col-md-4">
                         <div class="payment-info">
                             <form id="confirmForm" method="post" action="/confirm">
@@ -190,6 +185,52 @@
                                 <button class="btn btn-primary btn-block d-flex justify-content-between mt-3" type="button" onclick="handleConfirm()">
                                     <span>Confirm<i class="fa fa-long-arrow-right ml-1"></i></span>
                                 </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="user-profile" class="container mt-5 p-3 rounded cart " style="display: none;">
+
+            <div class="container mt-5 p-3 rounded cart">
+                <div class="row no-gutters">
+                    <div class="col-md-4">
+                        <div class="user-profile-info">
+                            <form id="edit-profile" method="post" action="/edit-profile">
+                                <div>
+                                    <label class="credit-card-label">MSSV</label>
+                                    <input type="text" class="form-control credit-inputs" id="profile-id" name="profile-id" th:value="${session.login_response.maTV}" required>
+                                </div>
+                                <br>
+                                <div>
+                                    <label class="credit-card-label">Thành viên</label>
+                                    <input type="text" class="form-control credit-inputs" id="profile-name" name="profile-name" th:value="${session.login_response.hoTen}" required>
+                                </div>
+                                <br>
+                                <div>
+                                    <label class="credit-card-label">Số điện thoại</label>
+                                    <input type="number" class="form-control credit-inputs" id="profile-phone-number" name="profile-phone-number" placeholder="Thêm SDT" th:value="${session.login_response.SDT}" readonly required>
+                                </div>
+                                <br>
+                                <div>
+                                    <label class="credit-card-label">Khoa</label>
+                                    <select class="form-select" name="profile-department" placeholder="Thêm khoa" th:value="${session.login_response.khoa}" required>
+                                        <option th:each="department : ${departments}" th:value="${department}" th:text="${department}"></option>
+                                    </select>
+                                </div>
+                                <br>
+                                <div>
+                                    <label class="credit-card-label">Ngành</label>
+                                    <select class="form-select" name="profile-major" placeholder="Thêm ngành" th:value="${session.login_response.nganh}" required>
+                                        <option value="Nganh 1">Nganh 1</option>
+                                        <option value="Nganh 2">Nganh 2</option>
+                                        <option value="Nganh 3">Nganh 3</option>
+                                    </select>
+                                </div>
+                                <br>
+                                <button class="btn btn-outline-secondary" type="submit">Cập nhật</button>
                             </form>
                         </div>
                     </div>
@@ -224,6 +265,10 @@
         // Lấy tham chiếu đến các phần tử khác cần ẩn
         const elementsToHide = document.querySelectorAll('header, section');
 
+        //profile
+        const profile_submit = document.getElementById('member');
+        const profile = document.getElementById('user-profile');
+
         // Sự kiện click vào nút giỏ hàng
         cartButton.addEventListener('click', function(event) {
             // Ngăn chặn hành động mặc định của nút
@@ -239,6 +284,23 @@
                 cart.style.display = 'none';
                 elementsToHide.forEach(element => {
                     element.style.display = 'block';
+                });
+            }
+        });
+
+        //go to profile
+        profile_submit.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            if (profile.style.display === 'none') {
+                profile.style.display = 'block';
+                elementsToHide.forEach(element => {
+                    element.style.display = 'none';
+                });
+            } else {
+                profile.style.display = 'none';
+                elementsToHide.forEach(element => {
+                    element.style.display = 'none';
                 });
             }
         });

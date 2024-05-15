@@ -3,6 +3,7 @@ package com.example.springmembermvc.Service;
 import com.example.springmembermvc.Model.DTO.member.memberDTO;
 import com.example.springmembermvc.Model.DTO.member.memberLoginDTO;
 import com.example.springmembermvc.Model.DTO.member.memberRegisterDTO;
+import com.example.springmembermvc.Model.DTO.member.memberUpdateDTO;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,6 +15,8 @@ public interface  memberService {
 
     memberDTO register(memberRegisterDTO memberRegisterDTO);
     memberDTO login (memberLoginDTO memberLoginDTO);
+
+    memberDTO update(memberUpdateDTO updateMember);
 //    public String registerMember(int MaTV, String HoTen, String Email, String Password) {
 //        if (HoTen == null || HoTen.equals("") || Email == null || Email.equals("") || Password == null) {
 //            return "Chi tiết đăng ký không hợp lệ";

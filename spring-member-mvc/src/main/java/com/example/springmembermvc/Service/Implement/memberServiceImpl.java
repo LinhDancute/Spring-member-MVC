@@ -4,6 +4,7 @@ import com.example.springmembermvc.Model.DTO.member.memberDTO;
 import com.example.springmembermvc.Model.DTO.member.memberLoginDTO;
 import com.example.springmembermvc.Model.DTO.member.memberRegisterDTO;
 import com.example.springmembermvc.Mapper.memberMapper;
+import com.example.springmembermvc.Model.DTO.member.memberUpdateDTO;
 import com.example.springmembermvc.Model.Entity.memberEntity;
 import com.example.springmembermvc.Repository.memberRespository;
 import com.example.springmembermvc.Service.memberService;
@@ -59,11 +60,31 @@ public class memberServiceImpl implements memberService {
         if (optionalMemberEntity.isPresent()) {
             memberEntity existingMember = optionalMemberEntity.get();
             if (passwordEncoder.matches(memberLoginDTO.getPassword(), existingMember.getPassword())) {
+
                 memberDTO dto =  memberMapper.convertToDTO(existingMember);
                 return dto;
             }
         }
         return null;
+    }
+
+    @Override
+    public memberDTO update(memberUpdateDTO updateMember) {
+        memberEntity existingMember = memberRepository.findById(updateMember.getId()).orElse(null);
+        if (existingMember == null) {
+            return null;
+        }
+        existingMember.setHoTen(updateMember.getName());
+        existingMember.setKhoa(updateMember.getDepartment());
+        existingMember.setNganh(updateMember.getMajor());
+        existingMember.setEmail(updateMember.getEmail());
+        existingMember.setSDT(updateMember.getPhoneNumber());
+
+        memberEntity updatedMemberEntity = memberRepository.save(existingMember);
+
+        memberDTO updatedMemberDTO = memberMapper.convertToDTO(updatedMemberEntity);
+
+        return updatedMemberDTO;
     }
 
 
