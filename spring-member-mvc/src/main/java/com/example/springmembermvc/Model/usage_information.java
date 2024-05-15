@@ -118,4 +118,5 @@ public class usage_information {
     public void setThanhvien(member thanhvien) {
         this.thanhvien = thanhvien;
     }
+
 }
