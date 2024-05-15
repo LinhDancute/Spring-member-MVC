@@ -21,7 +21,7 @@ public class memberController {
 
     private final memberRespository memberRepository;
 
-    private final memberService memberService;
+    public final memberService memberService;
     private final memberMapper memberMapper;
 
     public memberController(memberService memberService, memberRespository memberRepository, memberMapper memberMapper) {

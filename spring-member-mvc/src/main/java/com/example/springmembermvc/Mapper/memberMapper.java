@@ -45,5 +45,22 @@ public class memberMapper {
         dto.setEmail(memberEntity.getEmail());
         return dto;
     }
+
+    public memberEntity toEntity(memberDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+
+        memberEntity entity = new memberEntity();
+        entity.setId(dto.getMaTV());
+        entity.setEmail(dto.getEmail());
+        entity.setHoTen(dto.getHoTen());
+        entity.setKhoa(dto.getKhoa());
+        entity.setNganh(dto.getNganh());
+        entity.setPassword(dto.getPassword());
+        entity.setSDT(dto.getSDT());
+
+        return entity;
+    }
 }
 
