@@ -1,5 +1,6 @@
 package com.example.springmembermvc.Controller;
 
+import com.example.springmembermvc.Mapper.deviceMapper;
 import com.example.springmembermvc.Mapper.memberMapper;
 import com.example.springmembermvc.Model.DTO.member.memberDTO;
 import com.example.springmembermvc.Model.Entity.deviceEntity;
@@ -8,6 +9,7 @@ import com.example.springmembermvc.Model.Entity.usage_informationEntity;
 import com.example.springmembermvc.Repository.memberRespository;
 import com.example.springmembermvc.Repository.usage_informationRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
@@ -29,12 +31,14 @@ public class deviceController {
 
     private final usage_informationRepository usage_information_repository;
     private final com.example.springmembermvc.Mapper.memberMapper memberMapper;
+    private final com.example.springmembermvc.Mapper.deviceMapper deviceMapper;
 
-    public deviceController(deviceRepository deviceRepository, memberRespository memberRespository, usage_informationRepository usage_information_repository, memberMapper memberMapper) {
+    public deviceController(deviceRepository deviceRepository, memberRespository memberRespository, usage_informationRepository usage_information_repository, memberMapper memberMapper, deviceMapper deviceMapper) {
         this.deviceRepository = deviceRepository;
         this.memberRespository = memberRespository;
         this.usage_information_repository = usage_information_repository;
         this.memberMapper = memberMapper;
+        this.deviceMapper = deviceMapper;
     }
 
     // Khởi tạo mảng Cart
@@ -59,9 +63,9 @@ public class deviceController {
         return home(model, page); // Chuyển hướng yêu cầu đến phương thức home
     }
 
-    // add device to cart
+     //add device to cart
     @GetMapping("/addToCart/{MaTB}")
-    public String addToCart(@PathVariable int MaTB, HttpServletRequest session) {
+    public String addToCart(@PathVariable int MaTB, HttpSession session) {
         // get user information
         memberDTO loggedInMember = (memberDTO) session.getAttribute("login_response");
         if (loggedInMember == null) {
@@ -83,6 +87,8 @@ public class deviceController {
                 }
             }
 
+
+
             if (!found) {
                 cart.add(selectedDevice);
                 selectedDevice.setTrangThai(2);
@@ -91,6 +97,7 @@ public class deviceController {
                 usage_informationEntity usage_information = new usage_informationEntity();
                 usage_information.setId(selectedDevice.getId());
                 usage_information.setMaTV(memberMapper.toEntity(loggedInMember));
+                usage_information.setMaTB(selectedDevice);
                 usage_information.setTGDatcho(Instant.now());
 
                 usage_information = usage_information_repository.save(usage_information);

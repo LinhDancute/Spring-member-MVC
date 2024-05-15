@@ -1,11 +1,9 @@
 package com.example.springmembermvc.Controller;
 
 import com.example.springmembermvc.Mapper.memberMapper;
-import com.example.springmembermvc.Model.DTO.member.memberLoginDTO;
-import com.example.springmembermvc.Model.DTO.member.memberRegisterDTO;
-import com.example.springmembermvc.Model.DTO.member.memberDTO;
-import com.example.springmembermvc.Repository.memberRespository;
-import com.example.springmembermvc.Service.memberService;
+import com.example.springmembermvc.Model.DTO.member.*;
+import com.example.springmembermvc.Repository.*;
+import com.example.springmembermvc.Service.*;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -22,12 +20,18 @@ public class memberController {
     private final memberRespository memberRepository;
 
     public final memberService memberService;
-    private final memberMapper memberMapper;
+    public final memberMapper memberMapper;
+    public final deviceRepository deviceRespository;
+    public final deviceService deviceService;
+    public final usage_informationRepository usage_informationRepository;
 
-    public memberController(memberService memberService, memberRespository memberRepository, memberMapper memberMapper) {
+    public memberController(memberService memberService, memberRespository memberRepository, memberMapper memberMapper, deviceRepository deviceRespository, com.example.springmembermvc.Service.deviceService deviceService, com.example.springmembermvc.Repository.usage_informationRepository usageInformationRepository) {
         this.memberService = memberService;
         this.memberRepository = memberRepository;
         this.memberMapper = memberMapper;
+        this.deviceRespository = deviceRespository;
+        this.deviceService = deviceService;
+        usage_informationRepository = usageInformationRepository;
     }
 
     @GetMapping("/admin")
@@ -77,6 +81,7 @@ public class memberController {
             return "redirect:/login_get";
         }
     }
+
 
     @PostMapping("/register_post")
     public String register(
