@@ -1,11 +1,17 @@
 package com.example.springmembermvc.Controller;
 
+import com.example.springmembermvc.Mapper.deviceMapper;
+import com.example.springmembermvc.Mapper.memberMapper;
+import com.example.springmembermvc.Model.DTO.member.memberDTO;
 import com.example.springmembermvc.Model.Entity.deviceEntity;
 import com.example.springmembermvc.Model.Entity.memberEntity;
 import com.example.springmembermvc.Model.Entity.usage_informationEntity;
 import com.example.springmembermvc.Repository.memberRespository;
 import com.example.springmembermvc.Repository.usage_informationRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import org.springframework.data.domain.Page;
@@ -24,11 +30,15 @@ public class deviceController {
     private final memberRespository memberRespository;
 
     private final usage_informationRepository usage_information_repository;
+    private final com.example.springmembermvc.Mapper.memberMapper memberMapper;
+    private final com.example.springmembermvc.Mapper.deviceMapper deviceMapper;
 
-    public deviceController(deviceRepository deviceRepository, memberRespository memberRespository, usage_informationRepository usage_information_repository) {
+    public deviceController(deviceRepository deviceRepository, memberRespository memberRespository, usage_informationRepository usage_information_repository, memberMapper memberMapper, deviceMapper deviceMapper) {
         this.deviceRepository = deviceRepository;
         this.memberRespository = memberRespository;
         this.usage_information_repository = usage_information_repository;
+        this.memberMapper = memberMapper;
+        this.deviceMapper = deviceMapper;
     }
 
     // Khởi tạo mảng Cart
@@ -53,28 +63,50 @@ public class deviceController {
         return home(model, page); // Chuyển hướng yêu cầu đến phương thức home
     }
 
-    // Xử lý thêm thiết bị vào giỏ hàng
+     //add device to cart
     @GetMapping("/addToCart/{MaTB}")
-    public String addToCart(@PathVariable int MaTB) {
-        // Lấy thiết bị từ cơ sở dữ liệu dựa vào deviceId
+    public String addToCart(@PathVariable int MaTB, HttpSession session) {
+        // get user information
+        memberDTO loggedInMember = (memberDTO) session.getAttribute("login_response");
+        if (loggedInMember == null) {
+            // If the user is not logged in, redirect to login page
+            return "redirect:/login_get";
+        }
+
+        // get device by id
         Optional<deviceEntity> optionalDevice = deviceRepository.findById(MaTB);
         if (optionalDevice.isPresent()) {
             deviceEntity selectedDevice = optionalDevice.get();
-            // Kiểm tra xem thiết bị đã tồn tại trong giỏ hàng chưa
+
+            // checking device exist in cart
             boolean found = false;
             for (deviceEntity item : cart) {
                 if (item.getId().equals(selectedDevice.getId())) {
-                    // Nếu thiết bị đã tồn tại trong giỏ hàng, tăng số lượng lên 1
                     found = true;
                     break;
                 }
             }
-            // Nếu thiết bị chưa tồn tại trong giỏ hàng, thêm vào giỏ hàng và đặt số lượng là 1
+
+
+
             if (!found) {
                 cart.add(selectedDevice);
+                selectedDevice.setTrangThai(2);
+
+                // add information of device to usage_information
+                usage_informationEntity usage_information = new usage_informationEntity();
+                usage_information.setId(selectedDevice.getId());
+                usage_information.setMaTV(memberMapper.toEntity(loggedInMember));
+                usage_information.setMaTB(selectedDevice);
+                usage_information.setTGDatcho(Instant.now());
+
+                usage_information = usage_information_repository.save(usage_information);
+                selectedDevice.getThongtinsds().add(usage_information);
+                deviceRepository.save(selectedDevice);
             }
         }
-        // Chuyển hướng người dùng đến trang chính
+
+        // move to home page
         return "redirect:/";
     }
 

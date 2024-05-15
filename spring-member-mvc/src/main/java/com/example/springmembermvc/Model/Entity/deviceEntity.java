@@ -25,6 +25,9 @@ public class deviceEntity {
     @Column(name = "HinhanhTB")
     private String HinhanhTB;
 
+    @Column(name = "TrangThai")
+    private int TrangThai;
+
     @OneToMany(mappedBy = "MaTB")
     private Set<usage_informationEntity> thongtinsds = new LinkedHashSet<>();
 }

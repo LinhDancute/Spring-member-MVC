@@ -2,6 +2,9 @@ package com.example.springmembermvc.Controller;
 
 import com.example.springmembermvc.Mapper.memberMapper;
 import com.example.springmembermvc.Model.DTO.member.*;
+import com.example.springmembermvc.Repository.*;
+import com.example.springmembermvc.Service.*;
+import com.example.springmembermvc.Model.DTO.member.*;
 import com.example.springmembermvc.Model.Entity.*;
 import com.example.springmembermvc.Repository.memberRespository;
 import com.example.springmembermvc.Service.memberService;
@@ -23,13 +26,19 @@ public class memberController {
 
     private final memberRespository memberRepository;
 
-    private final memberService memberService;
-    private final memberMapper memberMapper;
+    public final memberService memberService;
+    public final memberMapper memberMapper;
+    public final deviceRepository deviceRespository;
+    public final deviceService deviceService;
+    public final usage_informationRepository usage_informationRepository;
 
-    public memberController(memberService memberService, memberRespository memberRepository, memberMapper memberMapper) {
+    public memberController(memberService memberService, memberRespository memberRepository, memberMapper memberMapper, deviceRepository deviceRespository, com.example.springmembermvc.Service.deviceService deviceService, com.example.springmembermvc.Repository.usage_informationRepository usageInformationRepository) {
         this.memberService = memberService;
         this.memberRepository = memberRepository;
         this.memberMapper = memberMapper;
+        this.deviceRespository = deviceRespository;
+        this.deviceService = deviceService;
+        usage_informationRepository = usageInformationRepository;
     }
 
     @GetMapping("/admin")
@@ -88,7 +97,6 @@ public class memberController {
         }
     }
 
-    //REGISTER
     @PostMapping("/register_post")
     public String register(
             @Valid @ModelAttribute("register_request") memberRegisterDTO register,
