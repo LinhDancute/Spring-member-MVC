@@ -34,6 +34,11 @@ public class memberController {
         return "admin/index";
     }
 
+//    @GetMapping("/home")
+//    public String go_to_index_page() {
+//        return "index";
+//    }
+
     @GetMapping("/login_get")
     public String show_login_form(Model model)
     {
@@ -52,7 +57,6 @@ public class memberController {
                         BindingResult result,
                         Model model,
                         RedirectAttributes redirectAttributes) {
-
         if (result.hasErrors()) {
             return "redirect:/login_get";
         }
@@ -60,10 +64,9 @@ public class memberController {
         memberDTO loggedInMember = memberService.login(login);
 
         if (loggedInMember != null) {
-
             redirectAttributes.addAttribute("successLogin", "true");
             redirectAttributes.addFlashAttribute("login", login);
-            return "redirect:/admin";
+            return "redirect:/index";
         } else {
             redirectAttributes.addFlashAttribute("loginError", "true");
             return "redirect:/login_get";

@@ -1,12 +1,10 @@
 package com.example.springmembermvc.Controller;
 
-import com.example.springmembermvc.Model.DTO.device.deviceDTO;
 import com.example.springmembermvc.Model.Entity.deviceEntity;
 import com.example.springmembermvc.Model.Entity.memberEntity;
 import com.example.springmembermvc.Model.Entity.usage_informationEntity;
 import com.example.springmembermvc.Repository.memberRespository;
 import com.example.springmembermvc.Repository.usage_informationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
