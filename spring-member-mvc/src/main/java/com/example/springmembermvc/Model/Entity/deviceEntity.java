@@ -22,7 +22,9 @@ public class deviceEntity {
     @Column(name = "TenTB")
     private String TenTB;
 
+    @Column(name = "HinhanhTB")
+    private String HinhanhTB;
+
     @OneToMany(mappedBy = "MaTB")
     private Set<usage_informationEntity> thongtinsds = new LinkedHashSet<>();
-
 }

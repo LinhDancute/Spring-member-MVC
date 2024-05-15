@@ -35,8 +35,8 @@ public class memberController {
     }
 
     @GetMapping("/admin")
-    public String index() {
-        return "index";
+    public String go_to_admin_page() {
+        return "admin/index";
     }
 
     @GetMapping("/login_get")
@@ -65,6 +65,7 @@ public class memberController {
         memberDTO loggedInMember = memberService.login(login);
 
         if (loggedInMember != null) {
+
             redirectAttributes.addAttribute("successLogin", "true");
             redirectAttributes.addFlashAttribute("login", login);
             return "redirect:/admin";
