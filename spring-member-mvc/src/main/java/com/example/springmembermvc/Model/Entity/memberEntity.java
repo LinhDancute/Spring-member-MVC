@@ -1,4 +1,4 @@
-package com.example.springmembermvc.Entity;
+package com.example.springmembermvc.Model.Entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,13 +11,13 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "thanhvien")
-public class member {
+public class memberEntity {
     @Id
     @Column(name = "MaTV", nullable = false)
     private Integer id;
 
     @Column(name = "Email")
-    private String Email;
+    private String email;
 
     @Column(name = "HoTen")
     private String HoTen;
@@ -34,10 +34,10 @@ public class member {
     @Column(name = "SDT")
     private String SDT;
 
-    @OneToMany(mappedBy = "maTV")
-    private Set<usage_information> thongtinsds = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "MaTV")
+    private Set<usage_informationEntity> thongtinsds = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "maTV")
-    private Set<handle_violations> xulies = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "MaTV")
+    private Set<handle_violationsEntity> xulies = new LinkedHashSet<>();
 
 }

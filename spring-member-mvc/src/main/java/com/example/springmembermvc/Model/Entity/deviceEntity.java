@@ -1,4 +1,4 @@
-package com.example.springmembermvc.Entity;
+package com.example.springmembermvc.Model.Entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "thietbi")
-public class device {
+public class deviceEntity {
     @Id
     @Column(name = "MaTB", nullable = false)
     private Integer id;
@@ -22,7 +22,7 @@ public class device {
     @Column(name = "TenTB")
     private String TenTB;
 
-    @OneToMany(mappedBy = "maTB")
-    private Set<usage_information> thongtinsds = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "MaTB")
+    private Set<usage_informationEntity> thongtinsds = new LinkedHashSet<>();
 
 }
