@@ -1,8 +1,10 @@
 package com.example.springmembermvc.Controller;
 
 import com.example.springmembermvc.Mapper.memberMapper;
+import com.example.springmembermvc.Model.DTO.member.memberLoginDTO;
 import com.example.springmembermvc.Model.DTO.member.memberRegisterDTO;
 import com.example.springmembermvc.Model.DTO.member.memberDTO;
+import com.example.springmembermvc.Model.Entity.memberEntity;
 import com.example.springmembermvc.Repository.memberRespository;
 import com.example.springmembermvc.Service.memberService;
 import jakarta.validation.Valid;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +34,11 @@ public class memberController {
         this.memberMapper = memberMapper;
     }
 
+    @GetMapping("/admin")
+    public String index() {
+        return "index";
+    }
+
     @GetMapping("/login_get")
     public String show_login_form(Model model)
     {
@@ -44,47 +52,51 @@ public class memberController {
         return "auth/register";
     }
 
-//    @PostMapping("/login_post")
-//    public String login(@ModelAttribute("login_request") member member, Model model, RedirectAttributes redirectAttributes) {
-//        member authenticated = memberService.loginMember(member.getMaTV(), member.getPassword());
-//
-//        if (authenticated != null) {
-//            model.addAttribute("login_response", authenticated);
-//            return "index";
-//        } else {
-//            redirectAttributes.addFlashAttribute("error", "Sai MSSV hoặc mật khẩu");
-//            return "redirect:/login_get";
-//        }
-//    }
-
-    @PostMapping("/register_post")
-    @ResponseBody
-    public Map<String, String> register(
-            @Valid @ModelAttribute("register_request") memberRegisterDTO register,
-            BindingResult result
-    ) {
-        Map<String, String> response = new HashMap<>();
+    @PostMapping("/login_post")
+    public String login(@ModelAttribute("login_request") memberLoginDTO login,
+                        BindingResult result,
+                        Model model,
+                        RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
-            response.put("message", "Đã xảy ra lỗi xác thực");
-            return response;
+            return "redirect:/login_get";
         }
 
-        if (memberService.existById(register.getMaTV())) {
-            response.put("message", "MSSV đã tồn tại");
-            return response;
+        memberDTO loggedInMember = memberService.login(login);
+
+        if (loggedInMember != null) {
+            redirectAttributes.addAttribute("successLogin", "true");
+            redirectAttributes.addFlashAttribute("login", login);
+            return "redirect:/admin";
+        } else {
+            redirectAttributes.addFlashAttribute("loginError", "true");
+            return "redirect:/login_get";
+        }
+    }
+
+    @PostMapping("/register_post")
+    public String register(
+            @Valid @ModelAttribute("register_request") memberRegisterDTO register,
+            BindingResult result,
+            RedirectAttributes redirectAttributes
+    ) {
+
+
+        if (result.hasErrors()) {
+            return "redirect:/register_get";
+        }else if (memberService.existById(register.getMaTV())) {
+            redirectAttributes.addAttribute("existedMSSV", "true");
+            redirectAttributes.addFlashAttribute("register", register);
+            return "redirect:/register_get";
         } else if (memberService.existByEmail(register.getEmail())) {
-            response.put("message", "Email đã tồn tại");
-            return response;
+            redirectAttributes.addAttribute("existedEmail", "true");
+            redirectAttributes.addFlashAttribute("register", register);
+            return "redirect:/register_get";
         }
 
         memberService.register(register);
-
-        response.put("message", "Đăng ký thành công");
-        response.put("redirect", "/login_get");
-        return response;
+        redirectAttributes.addAttribute("successRegister", "true");
+        redirectAttributes.addFlashAttribute("register", register);
+        return "redirect:/login_get";
     }
-
-
-
 }

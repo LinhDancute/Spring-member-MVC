@@ -1,6 +1,7 @@
 package com.example.springmembermvc.Service;
 
 import com.example.springmembermvc.Model.DTO.member.memberDTO;
+import com.example.springmembermvc.Model.DTO.member.memberLoginDTO;
 import com.example.springmembermvc.Model.DTO.member.memberRegisterDTO;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ public interface  memberService {
     boolean existByEmail(String Email);
 
     memberDTO register(memberRegisterDTO memberRegisterDTO);
+    memberDTO login (memberLoginDTO memberLoginDTO);
 //    public String registerMember(int MaTV, String HoTen, String Email, String Password) {
 //        if (HoTen == null || HoTen.equals("") || Email == null || Email.equals("") || Password == null) {
 //            return "Chi tiết đăng ký không hợp lệ";
