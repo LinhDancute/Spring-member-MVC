@@ -63,7 +63,7 @@ public class memberServiceImpl implements memberService {
                 return dto;
             }
         }
-        return null;
+        return new memberDTO();
     }
 
 

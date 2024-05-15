@@ -11,5 +11,6 @@ public class deviceDTO implements Serializable {
     public Integer MaTB;
     public String TenTB;
     public String MotaTB;
-    private String HinhanhTB;
+    public String HinhanhTB;
+    public int TrangThai;
 }

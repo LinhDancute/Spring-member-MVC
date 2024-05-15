@@ -64,6 +64,7 @@ public class deviceController {
             boolean found = false;
             for (deviceEntity item : cart) {
                 if (item.getId().equals(selectedDevice.getId())) {
+
                     // Nếu thiết bị đã tồn tại trong giỏ hàng, tăng số lượng lên 1
                     found = true;
                     break;
@@ -72,6 +73,7 @@ public class deviceController {
             // Nếu thiết bị chưa tồn tại trong giỏ hàng, thêm vào giỏ hàng và đặt số lượng là 1
             if (!found) {
                 cart.add(selectedDevice);
+                //selectedDevice.setTrangThai();
             }
         }
         // Chuyển hướng người dùng đến trang chính
