@@ -58,6 +58,7 @@ public class memberController {
     public String login(@ModelAttribute("login_request") memberLoginDTO login,
                         BindingResult result,
                         HttpSession session,
+                        Model model,
                         RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "redirect:/login_get";
@@ -67,6 +68,7 @@ public class memberController {
 
         if (loggedInMember != null) {
             session.setAttribute("login_response", loggedInMember);
+            model.addAttribute("login_response_info", loggedInMember);
             redirectAttributes.addAttribute("successLogin", "true");
             redirectAttributes.addFlashAttribute("login", login);
             return "redirect:/index";
