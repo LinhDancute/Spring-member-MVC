@@ -1,4 +1,4 @@
-package com.example.springmembermvc.Entity;
+package com.example.springmembermvc.Model.Entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import java.time.Instant;
 @Setter
 @Entity
 @Table(name = "thongtinsd")
-public class usage_information {
+public class usage_informationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "MaTT", nullable = false)
@@ -18,11 +18,11 @@ public class usage_information {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MaTB")
-    private device MaTB;
+    private deviceEntity MaTB;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MaTV")
-    private member MaTV;
+    private memberEntity MaTV;
 
     @Column(name = "TGDatcho")
     private Instant TGDatcho;
