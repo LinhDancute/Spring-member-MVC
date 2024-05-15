@@ -24,7 +24,7 @@ public class usage_information {
     @Column(name = "MaTT")
     public int MaTT;
     
-    @Column(name = "TGVao")
+    @Column(name = "TGVao", nullable = true)
     public LocalDateTime TGVao;
     
     @Column(name = "TGMuon", nullable = true)

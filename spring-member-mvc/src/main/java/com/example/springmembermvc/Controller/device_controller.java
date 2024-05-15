@@ -90,8 +90,62 @@ public class device_controller {
     }
 
 
+//    @PostMapping("/confirm")
+//    public String confirm(@RequestParam String name, @RequestParam String MSSV, Model model) {
+//        try {
+//            int maTV = Integer.parseInt(MSSV);
+//            Optional<member> optionalMember = member_responsitory.findById(maTV);
+//            if (optionalMember.isPresent()) {
+//                member foundMember = optionalMember.get();
+//                for (device d : cart) {
+//                    usage_information info = new usage_information();
+//                    info.setThanhvien(foundMember);
+//                    info.setThietbi(d);
+//                    info.setTGVao(LocalDateTime.now());
+//                    usage_information_repository.save(info);
+//                }
+//                model.addAttribute("message", "Lưu thông tin thành công");
+//                cart.clear();
+//            } else {
+//                model.addAttribute("message", "MSSV không tồn tại");
+//            }
+//        } catch (Exception e) {
+//            model.addAttribute("message", "Đã xảy ra lỗi: " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//        return "redirect:/";
+//    }
+
+//    @PostMapping("/confirm")
+//    public String confirm(@RequestParam String name, @RequestParam String MSSV, Model model) {
+//        try {
+//            int maTV = Integer.parseInt(MSSV);
+//            Optional<member> optionalMember = member_responsitory.findById(maTV);
+//            if (optionalMember.isPresent()) {
+//                member foundMember = optionalMember.get();
+//                for (device d : cart) {
+//                    usage_information info = new usage_information();
+//                    info.setThanhvien(foundMember);
+//                    info.setThietbi(d);
+//                    info.setTGVao(LocalDateTime.now());
+//                    usage_information_repository.save(info);
+//                }
+//                model.addAttribute("message", "Lưu thông tin thành công");
+//                cart.clear();
+//            } else {
+//                model.addAttribute("message", "MSSV không tồn tại");
+//            }
+//        } catch (Exception e) {
+//            model.addAttribute("message", "Đã xảy ra lỗi: " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//        return "redirect:/";
+//    }
+
     @PostMapping("/confirm")
-    public String confirm(@RequestParam String name, @RequestParam String MSSV, Model model) {
+    @ResponseBody
+    public Map<String, String> confirm(@RequestParam String name, @RequestParam String MSSV, Model model) {
+        Map<String, String> response = new HashMap<>();
         try {
             int maTV = Integer.parseInt(MSSV);
             Optional<member> optionalMember = member_responsitory.findById(maTV);
@@ -99,22 +153,25 @@ public class device_controller {
                 member foundMember = optionalMember.get();
                 for (device d : cart) {
                     usage_information info = new usage_information();
+                    info.setMaTT(1);
                     info.setThanhvien(foundMember);
-                    info.setThietbi(d);
-                    info.setTGVao(LocalDateTime.now());
+//                    info.setThietbi(d);
+//                    info.setTGVao(LocalDateTime.now());
+                    // Lưu thông tin vào cơ sở dữ liệu
                     usage_information_repository.save(info);
                 }
-                model.addAttribute("message", "Lưu thông tin thành công");
+                response.put("message", "Lưu thông tin thành công");
                 cart.clear();
             } else {
-                model.addAttribute("message", "MSSV không tồn tại");
+                response.put("message", "MSSV không tồn tại");
             }
         } catch (Exception e) {
-            model.addAttribute("message", "Đã xảy ra lỗi: " + e.getMessage());
+            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
             e.printStackTrace();
         }
-        return "redirect:/";
+        return response;
     }
+
 
 
 
@@ -128,6 +185,58 @@ public class device_controller {
         response.put("exists", optionalMember.isPresent());
         return response;
     }
+
+    @GetMapping("/category/{category}")
+    public String viewByCategory(@PathVariable int category, Model model, @RequestParam(defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, 12);
+        Page<device> devicePage;
+
+        switch (category) {
+            case 1:
+                devicePage = device_repository.findByMaTBStartingWith("1", pageable);
+                break;
+            case 2:
+                devicePage = device_repository.findByMaTBStartingWith("2", pageable);
+                break;
+            case 3:
+                devicePage = device_repository.findByMaTBStartingWith("3", pageable);
+                break;
+            case 4:
+                devicePage = device_repository.findByMaTBStartingWith("4", pageable);
+                break;
+            case 5:
+                devicePage = device_repository.findByMaTBStartingWith("5", pageable);
+                break;
+            case 6:
+                devicePage = device_repository.findByMaTBStartingWith("6", pageable);
+                break;
+            default:
+                devicePage = Page.empty();
+                break;
+        }
+
+        model.addAttribute("devices", devicePage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", devicePage.getTotalPages());
+        model.addAttribute("category", category);
+
+        return "index";
+    }
+
+    // Method to handle search requests
+    @GetMapping("/search")
+    public String searchDevices(@RequestParam("query") String query, Model model, @RequestParam(defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, 12);
+        Page<device> devicePage = device_repository.findByMaTBContaining(query, pageable);
+
+        model.addAttribute("devices", devicePage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", devicePage.getTotalPages());
+        model.addAttribute("searchQuery", query);
+
+        return "index";
+    }
+
 
 }
 
