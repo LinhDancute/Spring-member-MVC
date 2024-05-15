@@ -8,84 +8,69 @@
 
 </head>
 <body>
-<div class="container">
-    <div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
-        <div id="register-toast" class="toast align-items-center text-white bg-warning border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div id="toast" class="toast"></div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+<section class="bg-light py-3 py-md-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+                <div class="card border border-light-subtle rounded-3 shadow-sm">
+                    <div class="card-body p-3 p-md-4 p-xl-5">
+                        <h2 class="fs-6 fw-normal text-center text-secondary mb-4">Đăng nhập</h2>
+                        <div id="message-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+                            <div class="toast-header">
+                                <strong class="me-auto">Message</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                            <div class="toast-body">
+                                <!-- Message -->
+                            </div>
+                        </div>
+                        <form id="registerForm" method="post" action="/register_post" th:object="${register_request}">
+                            <div class="row gy-2 overflow-hidden">
+                                <div class="col-12">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="HoTen" name="HoTen" required>
+                                        <label for="HoTen" class="form-label">Họ tên</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="MaTV" name="MaTV" placeholder="3121410111" required>
+                                        <label for="MaTV" class="form-label">MSSV</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating mb-3">
+                                        <input type="email" class="form-control" id="Email" name="Email" placeholder="3121410111@sv.sgu.edu.vn" required>
+                                        <label for="Email" class="form-label">Email edu</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating mb-3">
+                                        <input type="password" class="form-control" name="Password" id="Password" placeholder="Password" required>
+                                        <label for="Password" class="form-label">Mật khẩu</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="d-flex gap-2 justify-content-between">
+                                        <a href="/forget_password_get" class="link-primary text-decoration-none">Quên mật khẩu?</a>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="d-grid my-3">
+                                        <button class="btn btn-primary btn-lg" type="submit">Đăng kí</button>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <p class="m-0 text-secondary text-center">Bạn đã có tài khoản? <a href="/login_get" class="link-primary text-decoration-none">Đăng nhập</a></p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <form id="registerForm" method="post" action="/register_post" th:object="${register_request}">
-        <div class="row gy-2 overflow-hidden">
-            <div class="col-12">
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="HoTen" name="HoTen" required>
-                    <label for="HoTen" class="form-label">Họ tên</label>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="form-floating mb-3">
-                    <input type="number" class="form-control" id="MaTV" name="MaTV" placeholder="3121410111" required>
-                    <label for="MaTV" class="form-label">MSSV</label>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="form-floating mb-3">
-                    <input type="email" class="form-control" id="Email" name="Email" placeholder="3121410111@sv.sgu.edu.vn" required>
-                    <label for="Email" class="form-label">Email edu</label>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="form-floating mb-3">
-                    <input type="password" class="form-control" name="Password" id="Password" placeholder="Password" required>
-                    <label for="Password" class="form-label">Mật khẩu</label>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="d-flex gap-2 justify-content-between">
-                    <a href="/forget_password_get" class="link-primary text-decoration-none">Quên mật khẩu?</a>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="d-grid my-3">
-                    <button class="btn btn-primary btn-lg" type="submit">Đăng kí</button>
-                </div>
-            </div>
-            <div class="col-12">
-                <p class="m-0 text-secondary text-center">Bạn đã có tài khoản? <a href="/login_get" class="link-primary text-decoration-none">Đăng nhập</a></p>
-            </div>
-        </div>
-    </form>
-</div>
-
 </section>
-<script>
-    $(document).ready(function() {
-        $('#registerForm').on('submit', function(event) {
-            event.preventDefault();
-
-            $.ajax({
-                type: 'POST',
-                url: '/register_post',
-                data: $(this).serialize(),
-                success: function(response) {
-                    const toastBody = $('#toast');
-                    toastBody.text(response.message);
-                    const toast = new bootstrap.Toast($('#register-toast'));
-                    toast.show();
-
-                    if (response.redirect) {
-                        setTimeout(function() {
-                            window.location.href = response.redirect;
-                        }, 2000);
-                    }
-                }
-            });
-        });
-    });
-</script>
 </body>
+<script th:src="@{/js/auth/register.js}" type="text/javascript"></script>
 </html>
