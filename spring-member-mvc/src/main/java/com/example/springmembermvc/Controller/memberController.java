@@ -6,6 +6,7 @@ import com.example.springmembermvc.Model.DTO.member.memberRegisterDTO;
 import com.example.springmembermvc.Model.DTO.member.memberDTO;
 import com.example.springmembermvc.Repository.memberRespository;
 import com.example.springmembermvc.Service.memberService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,16 +35,17 @@ public class memberController {
         return "admin/index";
     }
 
-//    @GetMapping("/home")
-//    public String go_to_index_page() {
-//        return "index";
-//    }
-
     @GetMapping("/login_get")
     public String show_login_form(Model model)
     {
         model.addAttribute("login_request", new memberDTO());
         return "auth/login";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/index";
     }
 
     @GetMapping("/register_get")
@@ -55,7 +57,7 @@ public class memberController {
     @PostMapping("/login_post")
     public String login(@ModelAttribute("login_request") memberLoginDTO login,
                         BindingResult result,
-                        Model model,
+                        HttpSession session,
                         RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "redirect:/login_get";
@@ -64,6 +66,7 @@ public class memberController {
         memberDTO loggedInMember = memberService.login(login);
 
         if (loggedInMember != null) {
+            session.setAttribute("login_response", loggedInMember);
             redirectAttributes.addAttribute("successLogin", "true");
             redirectAttributes.addFlashAttribute("login", login);
             return "redirect:/index";
@@ -79,8 +82,6 @@ public class memberController {
             BindingResult result,
             RedirectAttributes redirectAttributes
     ) {
-
-
         if (result.hasErrors()) {
             return "redirect:/register_get";
         }else if (memberService.existById(register.getMaTV())) {
