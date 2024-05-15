@@ -4,7 +4,6 @@ import com.example.springmembermvc.Mapper.memberMapper;
 import com.example.springmembermvc.Model.DTO.member.memberLoginDTO;
 import com.example.springmembermvc.Model.DTO.member.memberRegisterDTO;
 import com.example.springmembermvc.Model.DTO.member.memberDTO;
-import com.example.springmembermvc.Model.Entity.memberEntity;
 import com.example.springmembermvc.Repository.memberRespository;
 import com.example.springmembermvc.Service.memberService;
 import jakarta.validation.Valid;
@@ -14,11 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 public class memberController {
