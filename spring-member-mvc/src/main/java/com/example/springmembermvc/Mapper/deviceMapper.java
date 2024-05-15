@@ -11,7 +11,16 @@ public class deviceMapper {
         dto.setMaTB(deviceEntity.getId());
         dto.setTenTB(deviceEntity.getTenTB());
         dto.setMotaTB(deviceEntity.getMotaTB());
-        dto.setMotaTB(deviceEntity.getHinhanhTB());
+        dto.setHinhanhTB(deviceEntity.getHinhanhTB());
         return dto;
+    }
+
+    public deviceEntity convertToEntity(deviceDTO deviceDTO) {
+        deviceEntity entity = new deviceEntity();
+        entity.setId(deviceDTO.getMaTB());
+        entity.setTenTB(deviceDTO.getTenTB());
+        entity.setMotaTB(deviceDTO.getMotaTB());
+        entity.setHinhanhTB(deviceDTO.getHinhanhTB());
+        return entity;
     }
 }

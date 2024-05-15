@@ -263,54 +263,36 @@
           <!-- general form elements -->
           <div class="box box-primary">
             <div class="box-header with-border">
-              <h3 class="box-title">Thêm mới menu</h3>
+              <h3 class="box-title">Thêm mới thiết bị</h3>
             </div>
             <!-- /.box-header -->
             <!-- form start -->
-            <form role="form">
+            <form role="form" method="post" action="/add-menu">
               <div class="box-body">
                 <div class="form-group">
-                  <label for="exampleInputEmail1">Tên Menu</label>
-                  <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Giới thiệu">
+                  <label for="deviceCode">Mã thiết bị</label>
+                  <input type="text" class="form-control" id="deviceCode" name="deviceCode" placeholder="Ví dụ: 12345">
                 </div>
                 <div class="form-group">
-                  <label for="exampleInputEmail1">Chọn Menu Cha</label>
-                  <select name="" id="input" class="form-control" required="required">
-                    <option value="">Chọn danh Menu cha</option>
-                    <option value="">Học bổng</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label for="exampleInputEmail1">Chọn Vị trí</label>
-                  <select name="" id="input" class="form-control" required="required">
-                    <option value="">Chọn vị trí</option>
-                    <option value="">1</option>
-                    <option value="">2</option>
-                    <option value="">3</option>
-                  </select>
+                  <label for="deviceName">Tên thiết bị</label>
+                  <input type="text" class="form-control" id="deviceName" name="deviceName" placeholder="Ví dụ: Máy ảnh">
                 </div>
                 <div class="form-group">
-                  <label for="exampleInputEmail1">Chọn trạng thái</label>
-                  <div class="radio">
-                    <label>
-                      <input type="radio" name="" id="input" value="" checked="checked">
-                      Hiện
-                    </label>
-                    <label>
-                      <input type="radio" name="" id="input" value="" >
-                      Ẩn
-                    </label>
-                  </div>
+                  <label for="deviceDescription">Mô tả thiết bị</label>
+                  <input type="text" class="form-control" id="deviceDescription" name="deviceDescription" placeholder="">
                 </div>
-                
+                <div class="form-group">
+                  <label for="deviceImage">Hình ảnh thiết bị</label>
+                  <input type="text" class="form-control" id="deviceImage" name="deviceImage" placeholder="Chỗ này bạn cho tôi chọn hình ảnh có trong máy">
+                </div>
               </div>
-              <!-- /.box-body -->
-
               <div class="box-footer">
                 <button type="submit" class="btn btn-primary">Thêm mới</button>
               </div>
             </form>
+
+
+
           </div>
        
           <!-- /.box -->
@@ -335,6 +317,49 @@
 
 <!-- jQuery 3 -->
 
+<script>
+  $(document).ready(function () {
+    $('form').submit(function (event) {
+      event.preventDefault(); // Ngăn chặn gửi form mặc định
+
+      // Lấy dữ liệu từ các trường input
+      var maThietBi = $('#exampleInputEmail').val();
+      var tenThietBi = $('#exampleInputEmail1').val();
+      var moTaThietBi = $('#exampleInputEmail2').val();
+      var hinhAnhThietBi = $('#exampleInputEmail3').val();
+
+
+
+      // Gửi dữ liệu đến endpoint thêm mới thiết bị
+      $.ajax({
+        url: '/add-menu',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          maThietBi: maThietBi,
+          tenThietBi: tenThietBi,
+          moTaThietBi: moTaThietBi,
+          hinhAnhThietBi: hinhAnhThietBi
+        }),
+        success: function (response) {
+          // Xử lý thành công
+          console.log('Thêm mới thiết bị thành công!');
+          // Redirect hoặc thực hiện hành động khác sau khi thêm mới thiết bị thành công
+        },
+        error: function (xhr, status, error) {
+          // Xử lý lỗi
+          console.error('Lỗi khi thêm mới thiết bị:', error);
+        }
+      });
+    });
+  });
+</script>
+
+<script>
+  var base_url = window.location.origin;
+</script>
+
+
 <script th:src="@{/js/js/jquery.min.js}"></script>
 <script th:src="@{/js/js/jquery-ui.js}"></script>
 <script th:src="@{/js/js/bootstrap.min.js}"></script>
@@ -345,3 +370,6 @@
 <script th:src="@{/js/js/function.js}"></script>
 </body>
 </html>
+
+
+

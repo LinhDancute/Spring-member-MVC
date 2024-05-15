@@ -279,69 +279,31 @@
             <!-- /.box-header -->
             <div class="box-body table-responsive no-padding">
               <table class="table table-hover">
-                <tbody><tr>
-                  <th>Tên</th>
-                  <th>Menu cha</th>
-                  <th>Ngày tạo</th>
-                  <th>Trạng thái</th>
+                <tbody>
+                <tr>
+                  <th>Mã thiết bị</th>
+                  <th>Tên thiết bị</th>
+                  <th>Mô tả thiết bị</th>
+                  <th>Hình ảnh</th>
+<!--                  <th>Trạng thái</th>-->
                   <th>Tùy chọn</th>
                 </tr>
-                <tr>
-                  <td>Trang chủ</td>
-                  <td>____</td>
-                  <td>10-10-2018</td>
-                  <td><span class="label label-success">Hiển thị</span></td>
+                <!-- Lặp qua danh sách thiết bị và hiển thị chúng -->
+                <tr th:each="device : ${devices}">
+                  <td th:text="${device.MaTB}"></td>
+                  <td th:text="${device.TenTB}"></td>
+                  <td th:text="${device.MotaTB}"></td>
+                  <td><img th:src="${device.HinhanhTB}" alt="Hình ảnh thiết bị" style="width: 80px; height: auto;"></td>
+<!--                  <td><span class="label label-success">Hiển thị</span></td>-->
                   <td>
-                  <a href="/edit-menu" class="btn btn-success">Sửa</a>
-                  <a href="" class="btn btn-danger">Xóa</a>
-                    
-                  </td>
+                    <a href="/edit-menu" class="btn btn-success">Sửa</a>
+                    <a href="" class="btn btn-danger">Xóa</a>
+                  <!-- Các cột còn lại tương tự -->
                 </tr>
-                <tr>
-                  <td>Giới Thiệu</td>
-                  <td>____</td>
-                  <td>10-10-2018</td>
-                  <td><span class="label label-success">Hiển thị</span></td>
-                  <td>
-                  <a href="" class="btn btn-success">Sửa</a>
-                  <a href="" class="btn btn-danger">Xóa</a>
-                    
-                  </td>
-                </tr>
-                <tr>
-                  <td>Đào tạo</td>
-                  <td>____</td>
-                  <td>10-10-2018</td>
-                  <td><span class="label label-success">Hiển thị</span></td>
-                  <td>
-                  <a href="" class="btn btn-success">Sửa</a>
-                  <a href="" class="btn btn-danger">Xóa</a>
-                    
-                  </td>
-                </tr>
-                <tr>
-                  <td>Chương trình đào tạo</td>
-                  <td>Đào tạo</td>
-                  <td>10-10-2018</td>
-                  <td><span class="label label-success">Hiển thị</span></td>
-                  <td>
-                  <a href="" class="btn btn-success">Sửa</a>
-                  <a href="" class="btn btn-danger">Xóa</a>
-                    
-                  </td>
-                </tr>
-                <tr>
-                  <td>Thi đua khen thưởng</td>
-                  <td>Đào tạo</td>
-                  <td>10-10-2018</td>
-                  <td><span class="label label-danger">Đang ẩn</span></td>
-                  <td>
-                  <a href="" class="btn btn-success">Sửa</a>
-                  <a href="" class="btn btn-danger">Xóa</a>
-                    
-                  </td>
-                </tr>
-              </tbody></table>
+                </tbody>
+              </table>
+
+
             </div>
             <!-- /.box-body -->
           </div>

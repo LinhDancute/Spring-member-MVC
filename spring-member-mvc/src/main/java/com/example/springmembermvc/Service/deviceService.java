@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface deviceService {
     List<deviceDTO> getAllDevices();
+    void saveDevice(deviceDTO device);
 }

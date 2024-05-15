@@ -29,4 +29,14 @@ public class deviceServiceImpl implements deviceService {
                 .map(deviceMapper::convertToDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void saveDevice(deviceDTO device) {
+        // Chuyển đổi từ DTO sang entity nếu cần
+        deviceEntity entity = deviceMapper.convertToEntity(device);
+
+        // Lưu entity vào cơ sở dữ liệu thông qua repository
+        deviceRepository.save(entity);
+    }
+
 }

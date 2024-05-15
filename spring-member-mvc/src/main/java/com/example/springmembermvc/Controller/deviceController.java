@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import com.example.springmembermvc.Service.deviceService;
 
 import com.example.springmembermvc.Repository.deviceRepository;
 
@@ -237,6 +238,33 @@ public class deviceController {
         model.addAttribute("searchQuery", query);
 
         return "index";
+    }
+
+    @Autowired
+    private deviceService deviceService;
+
+    @GetMapping("/menu")
+    public String showMenu(Model model) {
+        List<deviceDTO> devices = deviceService.getAllDevices();
+        model.addAttribute("devices", devices);
+        return "admin/menu";
+    }
+
+    // Endpoint để hiển thị trang thêm mới thiết bị
+    @GetMapping("/add-menu")
+    public String showAddDeviceForm(Model model) {
+        model.addAttribute("device", new deviceDTO());
+        return "admin/add-menu"; // Đảm bảo bạn đã tạo trang HTML này
+    }
+
+    // Endpoint để xử lý yêu cầu thêm mới thiết bị
+    @PostMapping("/add-menu")
+    public String addDevice(@ModelAttribute("device") deviceDTO device) {
+        // Thêm mới thiết bị vào cơ sở dữ liệu bằng cách sử dụng service
+        deviceService.saveDevice(device);
+        // Sau khi thêm mới, chuyển hướng người dùng đến trang danh sách thiết bị hoặc trang cần thiết khác
+        return "redirect:/menu"; // Điều hướng đến trang danh sách thiết bị
+//        return "admin/menu";
     }
 
 
