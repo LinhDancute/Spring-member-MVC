@@ -8,8 +8,8 @@ import java.io.Serializable;
 @Setter
 @Getter
 public class deviceDTO implements Serializable {
-    public Integer MaTB;
-    public String TenTB;
-    public String MotaTB;
+    private Integer MaTB;
+    private String TenTB;
+    private String MotaTB;
     private String HinhanhTB;
 }

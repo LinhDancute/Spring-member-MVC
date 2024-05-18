@@ -296,8 +296,8 @@
                   <td><img th:src="${device.HinhanhTB}" alt="Hình ảnh thiết bị" style="width: 80px; height: auto;"></td>
 <!--                  <td><span class="label label-success">Hiển thị</span></td>-->
                   <td>
-                    <a href="/edit-menu" class="btn btn-success">Sửa</a>
-                    <a href="" class="btn btn-danger">Xóa</a>
+                    <a th:href="@{/edit-menu(id=${device.MaTB})}" class="btn btn-success">Sửa</a>
+                    <a th:href="@{/delete-device(id=${device.MaTB})}" class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa thiết bị này?');">Xóa</a>
                   <!-- Các cột còn lại tương tự -->
                 </tr>
                 </tbody>

@@ -11,10 +11,10 @@ public class AdminController {
 //        return "admin/menu";
 //    }
 
-    @GetMapping("/edit-menu")
-    public String go_to_edit_menu_page() {
-        return "admin/edit-menu";
-    }
+//    @GetMapping("/edit-menu")
+//    public String go_to_edit_menu_page() {
+//        return "admin/edit-menu";
+//    }
 
     @GetMapping("/edit-banner")
     public String go_to_edit_banner_page() {

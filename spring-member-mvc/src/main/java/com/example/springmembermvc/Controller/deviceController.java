@@ -95,58 +95,6 @@ public class deviceController {
     }
 
 
-//    @PostMapping("/confirm")
-//    public String confirm(@RequestParam String name, @RequestParam String MSSV, Model model) {
-//        try {
-//            int maTV = Integer.parseInt(MSSV);
-//            Optional<member> optionalMember = member_responsitory.findById(maTV);
-//            if (optionalMember.isPresent()) {
-//                member foundMember = optionalMember.get();
-//                for (device d : cart) {
-//                    usage_information info = new usage_information();
-//                    info.setThanhvien(foundMember);
-//                    info.setThietbi(d);
-//                    info.setTGVao(LocalDateTime.now());
-//                    usage_information_repository.save(info);
-//                }
-//                model.addAttribute("message", "Lưu thông tin thành công");
-//                cart.clear();
-//            } else {
-//                model.addAttribute("message", "MSSV không tồn tại");
-//            }
-//        } catch (Exception e) {
-//            model.addAttribute("message", "Đã xảy ra lỗi: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//        return "redirect:/";
-//    }
-
-//    @PostMapping("/confirm")
-//    public String confirm(@RequestParam String name, @RequestParam String MSSV, Model model) {
-//        try {
-//            int maTV = Integer.parseInt(MSSV);
-//            Optional<member> optionalMember = member_responsitory.findById(maTV);
-//            if (optionalMember.isPresent()) {
-//                member foundMember = optionalMember.get();
-//                for (device d : cart) {
-//                    usage_information info = new usage_information();
-//                    info.setThanhvien(foundMember);
-//                    info.setThietbi(d);
-//                    info.setTGVao(LocalDateTime.now());
-//                    usage_information_repository.save(info);
-//                }
-//                model.addAttribute("message", "Lưu thông tin thành công");
-//                cart.clear();
-//            } else {
-//                model.addAttribute("message", "MSSV không tồn tại");
-//            }
-//        } catch (Exception e) {
-//            model.addAttribute("message", "Đã xảy ra lỗi: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//        return "redirect:/";
-//    }
-
     @PostMapping("/confirm")
     @ResponseBody
     public Map<String, String> confirm(@RequestParam String name, @RequestParam String MSSV, Model model) {
@@ -265,6 +213,30 @@ public class deviceController {
         // Sau khi thêm mới, chuyển hướng người dùng đến trang danh sách thiết bị hoặc trang cần thiết khác
         return "redirect:/menu"; // Điều hướng đến trang danh sách thiết bị
 //        return "admin/menu";
+    }
+
+    @GetMapping("/edit-menu")
+    public String showEditForm(@RequestParam("id") Integer id, Model model) {
+        deviceDTO device = deviceService.getDeviceById(id);
+        model.addAttribute("device", device);
+        return "admin/edit-menu";
+    }
+
+    @PostMapping("/edit-menu")
+    public String updateDevice(@ModelAttribute deviceDTO device) {
+        deviceService.updateDevice(device);
+        return "redirect:/menu";  // Chuyển hướng về trang danh sách thiết bị sau khi cập nhật thành công
+    }
+
+    @Autowired
+    private deviceService device_service;
+
+    // Other methods...
+
+    @GetMapping("/delete-device")
+    public String deleteDevice(@RequestParam("id") Integer id) {
+        device_service.deleteDevice(id);
+        return "redirect:/menu";  // Chuyển hướng về trang danh sách thiết bị sau khi xóa thành công
     }
 
 
