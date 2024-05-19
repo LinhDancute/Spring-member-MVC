@@ -155,6 +155,7 @@ public class deviceController {
         return response;
     }
 
+    @CrossOrigin(origins = "http://localhost:8080")
     @PostMapping("/preOrder")
     @ResponseBody
     public Map<String, Object> handlePreOrder(
