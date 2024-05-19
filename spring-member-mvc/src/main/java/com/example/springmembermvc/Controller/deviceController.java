@@ -126,7 +126,7 @@ public class deviceController {
 
     @PostMapping("/confirm")
     @ResponseBody
-    public Map<String, String> confirm(@RequestParam String name, @RequestParam String MSSV, @PathVariable int MaTB) {
+    public Map<String, String> confirm(@RequestParam String name, @RequestParam String MSSV, @RequestParam int MaTB) {
         Map<String, String> response = new HashMap<>();
         try {
             int maTV = Integer.parseInt(MSSV);
@@ -140,20 +140,21 @@ public class deviceController {
                     info.setId(1);
                     info.setMaTV(foundMember);
                     info.setTGVao(Instant.now());
-                    // Lưu thông tin vào cơ sở dữ liệu
+
                     usage_information_repository.save(info);
                 }
-                response.put("message", "Lưu thông tin thành công");
+                response.put("message", "Information saved successfully");
                 cart.clear();
             } else {
-                response.put("message", "MSSV không tồn tại");
+                response.put("message", "MSSV does not exist");
             }
         } catch (Exception e) {
-            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
+            response.put("message", "An error occurred: " + e.getMessage());
             e.printStackTrace();
         }
         return response;
     }
+
 
     @CrossOrigin(origins = "http://localhost:8080")
     @PostMapping("/preOrder")

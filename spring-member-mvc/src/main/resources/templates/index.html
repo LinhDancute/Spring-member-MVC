@@ -285,9 +285,9 @@
                     success: function(response) {
                         console.log('Pre-order response:', response);
                         Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Data have been save',
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Data have been saved',
                             confirmButtonText: 'OK'
                         }).then(() => {
                             window.location.href = '/';
@@ -297,7 +297,7 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'Fail to saving data',
+                            text: 'Failed to save data',
                             confirmButtonText: 'OK'
                         }).then(() => {
                             window.location.href = '/';
