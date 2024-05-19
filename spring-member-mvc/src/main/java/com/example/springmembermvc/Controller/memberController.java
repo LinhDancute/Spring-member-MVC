@@ -6,13 +6,18 @@ import com.example.springmembermvc.Repository.*;
 import com.example.springmembermvc.Service.*;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDate;
 
 @Controller
 public class memberController {
@@ -106,4 +111,5 @@ public class memberController {
         redirectAttributes.addFlashAttribute("register", register);
         return "redirect:/login_get";
     }
+
 }

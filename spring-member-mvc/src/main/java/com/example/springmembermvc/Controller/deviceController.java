@@ -10,6 +10,7 @@ import com.example.springmembermvc.Repository.memberRespository;
 import com.example.springmembermvc.Repository.usage_informationRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,8 @@ import org.springframework.data.domain.Pageable;
 import com.example.springmembermvc.Repository.deviceRepository;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.*;
 
 @Controller
@@ -87,8 +90,6 @@ public class deviceController {
                 }
             }
 
-
-
             if (!found) {
                 cart.add(selectedDevice);
                 selectedDevice.setTrangThai(2);
@@ -123,66 +124,15 @@ public class deviceController {
         return cart;
     }
 
-
-//    @PostMapping("/confirm")
-//    public String confirm(@RequestParam String name, @RequestParam String MSSV, Model model) {
-//        try {
-//            int maTV = Integer.parseInt(MSSV);
-//            Optional<member> optionalMember = member_responsitory.findById(maTV);
-//            if (optionalMember.isPresent()) {
-//                member foundMember = optionalMember.get();
-//                for (device d : cart) {
-//                    usage_information info = new usage_information();
-//                    info.setThanhvien(foundMember);
-//                    info.setThietbi(d);
-//                    info.setTGVao(LocalDateTime.now());
-//                    usage_information_repository.save(info);
-//                }
-//                model.addAttribute("message", "Lưu thông tin thành công");
-//                cart.clear();
-//            } else {
-//                model.addAttribute("message", "MSSV không tồn tại");
-//            }
-//        } catch (Exception e) {
-//            model.addAttribute("message", "Đã xảy ra lỗi: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//        return "redirect:/";
-//    }
-
-//    @PostMapping("/confirm")
-//    public String confirm(@RequestParam String name, @RequestParam String MSSV, Model model) {
-//        try {
-//            int maTV = Integer.parseInt(MSSV);
-//            Optional<member> optionalMember = member_responsitory.findById(maTV);
-//            if (optionalMember.isPresent()) {
-//                member foundMember = optionalMember.get();
-//                for (device d : cart) {
-//                    usage_information info = new usage_information();
-//                    info.setThanhvien(foundMember);
-//                    info.setThietbi(d);
-//                    info.setTGVao(LocalDateTime.now());
-//                    usage_information_repository.save(info);
-//                }
-//                model.addAttribute("message", "Lưu thông tin thành công");
-//                cart.clear();
-//            } else {
-//                model.addAttribute("message", "MSSV không tồn tại");
-//            }
-//        } catch (Exception e) {
-//            model.addAttribute("message", "Đã xảy ra lỗi: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//        return "redirect:/";
-//    }
-
     @PostMapping("/confirm")
     @ResponseBody
-    public Map<String, String> confirm(@RequestParam String name, @RequestParam String MSSV, Model model) {
+    public Map<String, String> confirm(@RequestParam String name, @RequestParam String MSSV, @PathVariable int MaTB) {
         Map<String, String> response = new HashMap<>();
         try {
             int maTV = Integer.parseInt(MSSV);
             Optional<memberEntity> optionalMember = memberRespository.findById(maTV);
+            Optional<deviceEntity> device = deviceRepository.findById(MaTB);
+            System.out.println(device);
             if (optionalMember.isPresent()) {
                 memberEntity foundMember = optionalMember.get();
                 for (deviceEntity d : cart) {
@@ -205,7 +155,46 @@ public class deviceController {
         return response;
     }
 
+    @PostMapping("/preOrder")
+    @ResponseBody
+    public Map<String, Object> handlePreOrder(
+            @RequestParam("productId") int productId,
+            @RequestParam("studentID") String studentID,
+            @RequestParam(value = "preorderDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate preorderDate) {
 
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Optional<memberEntity> optionalMember = memberRespository.findById(Integer.parseInt(studentID));
+            Optional<deviceEntity> device = deviceRepository.findById(productId);
+
+            if (optionalMember.isPresent() && device.isPresent()) {
+                memberEntity user = optionalMember.get();
+                deviceEntity selectedDevice = device.get();
+
+                //set usage information
+                usage_informationEntity usageInformation = new usage_informationEntity();
+                usageInformation.setMaTV(user);
+                usageInformation.setMaTB(selectedDevice);
+                usageInformation.setTGDatcho(preorderDate.atStartOfDay().toInstant(ZoneOffset.UTC));
+
+                //set device status
+                selectedDevice.setTrangThai(1);
+
+                // Save the usage information
+                usageInformation = usage_information_repository.save(usageInformation);
+                selectedDevice.getThongtinsds().add(usageInformation);
+                deviceRepository.save(selectedDevice);
+
+                response.put("message", "Pre-order successful");
+            } else {
+                response.put("message", "Member or Device not found");
+            }
+        } catch (Exception e) {
+            response.put("message", "Failed to pre-order: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return response;
+    }
 
 
     // API endpoint to check if MSSV exists
