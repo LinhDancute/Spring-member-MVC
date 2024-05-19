@@ -8,11 +8,11 @@ import com.example.springmembermvc.Model.Entity.memberEntity;
 import com.example.springmembermvc.Model.Entity.usage_informationEntity;
 import com.example.springmembermvc.Repository.memberRespository;
 import com.example.springmembermvc.Repository.usage_informationRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import org.springframework.data.domain.Page;
@@ -66,95 +66,45 @@ public class deviceController {
         return home(model, page); // Chuyển hướng yêu cầu đến phương thức home
     }
 
-     //add device to cart
-    @GetMapping("/addToCart/{MaTB}")
-    public String addToCart(@PathVariable int MaTB, HttpSession session) {
-        // get user information
-        memberDTO loggedInMember = (memberDTO) session.getAttribute("login_response");
-        if (loggedInMember == null) {
-            // If the user is not logged in, redirect to login page
-            return "redirect:/login_get";
-        }
+     @GetMapping("/borrow/{deviceId}")
+     public ResponseEntity<?> addToCart(@PathVariable("deviceId") int deviceId, HttpSession session) {
+         memberDTO loggedInMember = (memberDTO) session.getAttribute("login_response");
+         if (loggedInMember == null) {
+             // If the user is not logged in, redirect to login page
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", "User not logged in"));
+         }
 
-        // get device by id
-        Optional<deviceEntity> optionalDevice = deviceRepository.findById(MaTB);
-        if (optionalDevice.isPresent()) {
-            deviceEntity selectedDevice = optionalDevice.get();
+         Optional<deviceEntity> optionalDevice = deviceRepository.findById(deviceId);
+         if (optionalDevice.isPresent()) {
+             deviceEntity selectedDevice = optionalDevice.get();
+             System.out.println(selectedDevice.getTenTB());
 
-            // checking device exist in cart
-            boolean found = false;
-            for (deviceEntity item : cart) {
-                if (item.getId().equals(selectedDevice.getId())) {
-                    found = true;
-                    break;
-                }
-            }
+             //update status for device
+             switch (selectedDevice.getTrangThai()) {
+                 case 1:
+                     return ResponseEntity.ok(Collections.singletonMap("Device is borrowing", false));
+                 case 2:
+                     return ResponseEntity.ok(Collections.singletonMap("Device has been pre-order",false));
+                 default:
+                     usage_informationEntity usage_information = new usage_informationEntity();
+                     usage_information.setMaTV(memberMapper.toEntity(loggedInMember));
+                     usage_information.setMaTB(selectedDevice);
+                     usage_information.setTGDatcho(Instant.now());
 
-            if (!found) {
-                cart.add(selectedDevice);
-                selectedDevice.setTrangThai(2);
+                     //set device status
+                     selectedDevice.setTrangThai(1);
 
-                // add information of device to usage_information
-                usage_informationEntity usage_information = new usage_informationEntity();
-                usage_information.setId(selectedDevice.getId());
-                usage_information.setMaTV(memberMapper.toEntity(loggedInMember));
-                usage_information.setMaTB(selectedDevice);
-                usage_information.setTGDatcho(Instant.now());
+                     usage_information = usage_information_repository.save(usage_information);
+                     selectedDevice.getThongtinsds().add(usage_information);
+                     deviceRepository.save(selectedDevice);
 
-                usage_information = usage_information_repository.save(usage_information);
-                selectedDevice.getThongtinsds().add(usage_information);
-                deviceRepository.save(selectedDevice);
-            }
-        }
+                     return ResponseEntity.ok(Collections.singletonMap("success", true));
+             }
 
-        // move to home page
-        return "redirect:/";
-    }
-
-    // Endpoint để trả về trang giỏ hàng
-    @GetMapping("/cart")
-    public String viewCart(Model model) {
-        model.addAttribute("cartItems", cart);
-        return "cart";
-    }
-
-    // Getter cho Cart
-    @ModelAttribute("cart")
-    public List<deviceEntity> getCart() {
-        return cart;
-    }
-
-    @PostMapping("/confirm")
-    @ResponseBody
-    public Map<String, String> confirm(@RequestParam String name, @RequestParam String MSSV, @RequestParam int MaTB) {
-        Map<String, String> response = new HashMap<>();
-        try {
-            int maTV = Integer.parseInt(MSSV);
-            Optional<memberEntity> optionalMember = memberRespository.findById(maTV);
-            Optional<deviceEntity> device = deviceRepository.findById(MaTB);
-            System.out.println(device);
-            if (optionalMember.isPresent()) {
-                memberEntity foundMember = optionalMember.get();
-                for (deviceEntity d : cart) {
-                    usage_informationEntity info = new usage_informationEntity();
-                    info.setId(1);
-                    info.setMaTV(foundMember);
-                    info.setTGVao(Instant.now());
-
-                    usage_information_repository.save(info);
-                }
-                response.put("message", "Information saved successfully");
-                cart.clear();
-            } else {
-                response.put("message", "MSSV does not exist");
-            }
-        } catch (Exception e) {
-            response.put("message", "An error occurred: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return response;
-    }
-
+         } else {
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error", "Device not found"));
+         }
+     }
 
     @CrossOrigin(origins = "http://localhost:8080")
     @PostMapping("/preOrder")
@@ -180,7 +130,7 @@ public class deviceController {
                 usageInformation.setTGDatcho(preorderDate.atStartOfDay().toInstant(ZoneOffset.UTC));
 
                 //set device status
-                selectedDevice.setTrangThai(1);
+                selectedDevice.setTrangThai(2);
 
                 // Save the usage information
                 usageInformation = usage_information_repository.save(usageInformation);
