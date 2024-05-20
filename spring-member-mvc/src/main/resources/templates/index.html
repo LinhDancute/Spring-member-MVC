@@ -198,37 +198,48 @@
                 <div class="row no-gutters">
                     <div class="col-md-4">
                         <div class="user-profile-info">
-                            <form id="edit-profile" method="post" action="/edit-profile">
+                            <form id="edit-profile" method="post" th:action="@{/edit-profile/{id}(id=${session.login_response.maTV})}">
                                 <div>
                                     <label class="credit-card-label">MSSV</label>
-                                    <input type="text" class="form-control credit-inputs" id="profile-id" name="profile-id" th:value="${session.login_response.maTV}" required>
+                                    <input type="text" class="form-control credit-inputs" id="profile-id" name="id" th:value="${session.login_response.maTV}" readonly required>
                                 </div>
                                 <br>
                                 <div>
                                     <label class="credit-card-label">Thành viên</label>
-                                    <input type="text" class="form-control credit-inputs" id="profile-name" name="profile-name" th:value="${session.login_response.hoTen}" required>
+                                    <input type="text" class="form-control credit-inputs" id="profile-name" name="name" th:value="${session.login_response.hoTen}" required>
+                                </div>
+                                <div>
+                                    <label class="credit-card-label">Email</label>
+                                    <input type="text" class="form-control credit-inputs" id="profile-email" name="email" th:value="${session.login_response.email}" readonly required>
                                 </div>
                                 <br>
                                 <div>
                                     <label class="credit-card-label">Số điện thoại</label>
-                                    <input type="number" class="form-control credit-inputs" id="profile-phone-number" name="profile-phone-number" placeholder="Thêm SDT" th:value="${session.login_response.SDT}" readonly required>
+                                    <input type="number" class="form-control credit-inputs" id="profile-phone-number" name="phoneNumber" placeholder="Thêm SDT" th:value="${session.login_response.SDT}" required>
                                 </div>
                                 <br>
                                 <div>
                                     <label class="credit-card-label">Khoa</label>
-                                    <select class="form-select" name="profile-department" placeholder="Thêm khoa" th:value="${session.login_response.khoa}" required>
-                                        <option th:each="department : ${departments}" th:value="${department}" th:text="${department}"></option>
+                                    <select class="form-select" name="department" placeholder="Thêm khoa" required>
+                                        <option value="Toán Tin">Toán Tin</option>
+                                        <option value="ATTT">ATTT</option>
+                                        <option value="Sư phạm Anh">Sư phạm Anh</option>
+                                        <option value="HTTT">HTTT</option>
+                                        <option value="Sư phạm Văn">Sư phạm Văn</option>
                                     </select>
                                 </div>
                                 <br>
                                 <div>
                                     <label class="credit-card-label">Ngành</label>
-                                    <select class="form-select" name="profile-major" placeholder="Thêm ngành" th:value="${session.login_response.nganh}" required>
-                                        <option value="Nganh 1">Nganh 1</option>
-                                        <option value="Nganh 2">Nganh 2</option>
-                                        <option value="Nganh 3">Nganh 3</option>
+                                    <select class="form-select" name="major" placeholder="Thêm ngành" required>
+                                        <option value="CNTT">CNTT</option>
+                                        <option value="Sư phạm">Sư phạm</option>
+                                        <option value="Ngoại ngữ">Ngoại ngữ</option>
+                                        <option value="Kỹ thuật xây dựng">Kỹ thuật xây dựng</option>
+                                        <option value="Kiến trúc">Kiến trúc</option>
                                     </select>
                                 </div>
+
                                 <br>
                                 <button class="btn btn-outline-secondary" type="submit">Cập nhật</button>
                             </form>

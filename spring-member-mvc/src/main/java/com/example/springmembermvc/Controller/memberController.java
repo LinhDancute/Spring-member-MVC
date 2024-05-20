@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -123,15 +124,18 @@ public class memberController {
     }
 
     //UPDATE
-    @PostMapping("/edit-profile")
-    public String update(
+    @PostMapping("/edit-profile/{id}")
+    public String updateProfile(
+            @PathVariable("id") Integer id,
             @Valid @ModelAttribute memberUpdateDTO updateMember,
             BindingResult result,
             RedirectAttributes redirectAttributes
-    ){
+    ) {
         if (result.hasErrors()) {
             return "redirect:/index";
         }
+
+        updateMember.setId(id);
 
         memberService.update(updateMember);
         redirectAttributes.addAttribute("successUpdateMember", "true");
