@@ -204,7 +204,7 @@
 
         <li>
           <a href="/menu">
-            <i class="fa fa-th"></i> <span>Quản lý Menu </span>
+            <i class="fa fa-th"></i> <span>Quản lý Thiết bị  </span>
             <span class="pull-right-container">
               <small class="label pull-right bg-green">FE</small>
             </span>
@@ -267,50 +267,27 @@
             </div>
             <!-- /.box-header -->
             <!-- form start -->
-            <form role="form">
+            <form role="form" method="post" action="/edit-menu">
               <div class="box-body">
                 <div class="form-group">
-                  <label for="exampleInputEmail1">Tên Menu</label>
-                  <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Giới thiệu" value="Học Bổng">
+                  <label for="deviceName">Tên thiết bị</label>
+                  <input type="text" class="form-control" id="deviceName" name="TenTB" th:value="${device.TenTB}" placeholder="Ví dụ: Máy ảnh">
                 </div>
                 <div class="form-group">
-                  <label for="exampleInputEmail1">Chọn Menu Cha</label>
-                  <select name="" id="input" class="form-control" required="required">
-                    <option value="">Đào tạo</option>
-                    <option value="">Học bổng</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label for="exampleInputEmail1">Chọn Vị trí</label>
-                  <select name="" id="input" class="form-control" required="required">
-                    <option value="">1</option>
-                    <option value="">1</option>
-                    <option value="">2</option>
-                    <option value="">3</option>
-                  </select>
+                  <label for="deviceDescription">Mô tả thiết bị</label>
+                  <input type="text" class="form-control" id="deviceDescription" name="MotaTB" th:value="${device.MotaTB}" placeholder="">
                 </div>
                 <div class="form-group">
-                  <label for="exampleInputEmail1">Chọn trạng thái</label>
-                  <div class="radio">
-                    <label>
-                      <input type="radio" name="" id="input" value="" checked="checked">
-                      Hiện
-                    </label>
-                    <label>
-                      <input type="radio" name="" id="input" value="" >
-                      Ẩn
-                    </label>
-                  </div>
+                  <label for="deviceImage">Hình ảnh thiết bị</label>
+                  <input type="text" class="form-control" id="deviceImage" name="HinhanhTB" th:value="${device.HinhanhTB}" placeholder="">
                 </div>
-                
               </div>
-              <!-- /.box-body -->
-
               <div class="box-footer">
                 <button type="submit" class="btn btn-primary">Cập nhật</button>
               </div>
+              <input type="hidden" name="MaTB" th:value="${device.MaTB}">
             </form>
+
           </div>
        
           <!-- /.box -->

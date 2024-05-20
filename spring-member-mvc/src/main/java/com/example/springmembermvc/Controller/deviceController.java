@@ -2,6 +2,7 @@ package com.example.springmembermvc.Controller;
 
 import com.example.springmembermvc.Mapper.deviceMapper;
 import com.example.springmembermvc.Mapper.memberMapper;
+import com.example.springmembermvc.Model.DTO.device.deviceDTO;
 import com.example.springmembermvc.Model.DTO.member.memberDTO;
 import com.example.springmembermvc.Model.Entity.deviceEntity;
 import com.example.springmembermvc.Model.Entity.memberEntity;
@@ -9,6 +10,7 @@ import com.example.springmembermvc.Model.Entity.usage_informationEntity;
 import com.example.springmembermvc.Repository.memberRespository;
 import com.example.springmembermvc.Repository.usage_informationRepository;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -259,6 +261,57 @@ public class deviceController {
         model.addAttribute("searchQuery", query);
 
         return "index";
+    }
+
+    @Autowired
+    private deviceService deviceService;
+
+    @GetMapping("/menu")
+    public String showMenu(Model model) {
+        List<deviceDTO> devices = deviceService.getAllDevices();
+        model.addAttribute("devices", devices);
+        return "admin/menu";
+    }
+
+    // Endpoint để hiển thị trang thêm mới thiết bị
+    @GetMapping("/add-menu")
+    public String showAddDeviceForm(Model model) {
+        model.addAttribute("device", new deviceDTO());
+        return "admin/add-menu"; // Đảm bảo bạn đã tạo trang HTML này
+    }
+
+    // Endpoint để xử lý yêu cầu thêm mới thiết bị
+    @PostMapping("/add-menu")
+    public String addDevice(@ModelAttribute("device") deviceDTO device) {
+        // Thêm mới thiết bị vào cơ sở dữ liệu bằng cách sử dụng service
+        deviceService.saveDevice(device);
+        // Sau khi thêm mới, chuyển hướng người dùng đến trang danh sách thiết bị hoặc trang cần thiết khác
+        return "redirect:/menu"; // Điều hướng đến trang danh sách thiết bị
+//        return "admin/menu";
+    }
+
+    @GetMapping("/edit-menu")
+    public String showEditForm(@RequestParam("id") Integer id, Model model) {
+        deviceDTO device = deviceService.getDeviceById(id);
+        model.addAttribute("device", device);
+        return "admin/edit-menu";
+    }
+
+    @PostMapping("/edit-menu")
+    public String updateDevice(@ModelAttribute deviceDTO device) {
+        deviceService.updateDevice(device);
+        return "redirect:/menu";  // Chuyển hướng về trang danh sách thiết bị sau khi cập nhật thành công
+    }
+
+    @Autowired
+    private deviceService device_service;
+
+    // Other methods...
+
+    @GetMapping("/delete-device")
+    public String deleteDevice(@RequestParam("id") Integer id) {
+        device_service.deleteDevice(id);
+        return "redirect:/menu";  // Chuyển hướng về trang danh sách thiết bị sau khi xóa thành công
     }
 
 

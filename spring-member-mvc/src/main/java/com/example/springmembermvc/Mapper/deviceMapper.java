@@ -16,7 +16,7 @@ public class deviceMapper {
         return dto;
     }
 
-    
+
     public deviceEntity toEntity(deviceDTO dto) {
         if (dto == null) {
             return null;
@@ -30,6 +30,15 @@ public class deviceMapper {
         entity.setTrangThai(dto.getTrangThai());
         // If you have any mappings for sets or collections, you should handle them here
 
+        return entity;
+    }
+
+    public deviceEntity convertToEntity(deviceDTO deviceDTO) {
+        deviceEntity entity = new deviceEntity();
+        entity.setId(deviceDTO.getMaTB());
+        entity.setTenTB(deviceDTO.getTenTB());
+        entity.setMotaTB(deviceDTO.getMotaTB());
+        entity.setHinhanhTB(deviceDTO.getHinhanhTB());
         return entity;
     }
 }

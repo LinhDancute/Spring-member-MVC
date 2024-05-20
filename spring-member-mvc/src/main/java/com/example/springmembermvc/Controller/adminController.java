@@ -6,15 +6,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class adminController {
 
-    @GetMapping("/menu")
-    public String go_to_menu_page() {
-        return "admin/menu";
-    }
+//    @GetMapping("/menu")
+//    public String go_to_menu_page() {
+//        return "admin/menu";
+//    }
 
-    @GetMapping("/edit-menu")
-    public String go_to_edit_menu_page() {
-        return "admin/edit-menu";
-    }
+//    @GetMapping("/edit-menu")
+//    public String go_to_edit_menu_page() {
+//        return "admin/edit-menu";
+//    }
 
     @GetMapping("/edit-banner")
     public String go_to_edit_banner_page() {
@@ -31,10 +31,10 @@ public class adminController {
         return "admin/banner";
     }
 
-    @GetMapping("/add-menu")
-    public String go_to_add_menu_page() {
-        return "admin/add-menu";
-    }
+//    @GetMapping("/add-menu")
+//    public String go_to_add_menu_page() {
+//        return "admin/add-menu";
+//    }
 
     @GetMapping("/add-banner")
     public String go_to_add_banner_page() {

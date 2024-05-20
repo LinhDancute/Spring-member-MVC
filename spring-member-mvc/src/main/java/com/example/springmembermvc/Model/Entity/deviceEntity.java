@@ -13,6 +13,7 @@ import java.util.Set;
 @Table(name = "thietbi")
 public class deviceEntity {
     @Id
+//    @GeneratedValue(strategy = GenerationType.TABLE)
     @Column(name = "MaTB", nullable = false)
     private Integer id;
 
