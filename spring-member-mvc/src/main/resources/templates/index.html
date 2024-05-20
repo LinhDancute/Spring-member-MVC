@@ -173,21 +173,22 @@
                 })
                     .then(response => response.json())
                     .then(data => {
+                        let icon, title, text;
                         if (data.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: 'Borrowed successfully!',
-                                confirmButtonText: 'OK'
-                            });
+                            icon = 'success';
+                            title = 'Success';
+                            text = data.message || 'Borrowed successfully!';
                         } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: data.keys,
-                                confirmButtonText: 'OK'
-                            });
+                            icon = 'error';
+                            title = 'Error';
+                            text = data.message || 'Failed to borrow.';
                         }
+                        Swal.fire({
+                            icon: icon,
+                            title: title,
+                            text: text,
+                            confirmButtonText: 'OK'
+                        });
                     })
                     .catch(error => {
                         Swal.fire({

@@ -21,10 +21,13 @@ import org.springframework.data.domain.Pageable;
 
 import com.example.springmembermvc.Repository.deviceRepository;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.*;
+
+import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.time;
 
 @Controller
 public class deviceController {
@@ -66,45 +69,80 @@ public class deviceController {
         return home(model, page); // Chuyển hướng yêu cầu đến phương thức home
     }
 
-     @GetMapping("/borrow/{deviceId}")
-     public ResponseEntity<?> addToCart(@PathVariable("deviceId") int deviceId, HttpSession session) {
-         memberDTO loggedInMember = (memberDTO) session.getAttribute("login_response");
-         if (loggedInMember == null) {
-             // If the user is not logged in, redirect to login page
-             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", "User not logged in"));
-         }
+    @GetMapping("/borrow/{deviceId}")
+    public ResponseEntity<?> addToCart(@PathVariable("deviceId") int deviceId, HttpSession session) {
+        memberDTO loggedInMember = (memberDTO) session.getAttribute("login_response");
+        if (loggedInMember == null) {
+            // If the user is not logged in, redirect to login page
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "User not logged in");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
 
-         Optional<deviceEntity> optionalDevice = deviceRepository.findById(deviceId);
-         if (optionalDevice.isPresent()) {
-             deviceEntity selectedDevice = optionalDevice.get();
-             System.out.println(selectedDevice.getTenTB());
+        Optional<deviceEntity> optionalDevice = deviceRepository.findById(deviceId);
 
-             //update status for device
-             switch (selectedDevice.getTrangThai()) {
-                 case 1:
-                     return ResponseEntity.ok(Collections.singletonMap("Device is borrowing", false));
-                 case 2:
-                     return ResponseEntity.ok(Collections.singletonMap("Device has been pre-order",false));
-                 default:
-                     usage_informationEntity usage_information = new usage_informationEntity();
-                     usage_information.setMaTV(memberMapper.toEntity(loggedInMember));
-                     usage_information.setMaTB(selectedDevice);
-                     usage_information.setTGDatcho(Instant.now());
+        if (optionalDevice.isPresent()) {
+            deviceEntity selectedDevice = optionalDevice.get();
 
-                     //set device status
-                     selectedDevice.setTrangThai(1);
+            // get reservation time of device
+            Optional<usage_informationEntity> usage_information = usage_information_repository.findById(selectedDevice.getId());
+            usage_informationEntity usage_information1 = usage_information.get();
+            Instant reservationTime = usage_information1.getTGDatcho();
 
-                     usage_information = usage_information_repository.save(usage_information);
-                     selectedDevice.getThongtinsds().add(usage_information);
-                     deviceRepository.save(selectedDevice);
+            // get instant time
+            Instant currentTime = Instant.now();
 
-                     return ResponseEntity.ok(Collections.singletonMap("success", true));
-             }
+            // compare reservation time with currentTime
+            if (reservationTime != null){
+                Duration duration = Duration.between(reservationTime, currentTime);
 
-         } else {
-             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error", "Device not found"));
-         }
-     }
+                if (duration.toHours() > 1) {
+                    selectedDevice.setTrangThai(0);
+                }
+            }
+
+            //checking time
+            System.out.println(java.time.LocalDate.now());
+
+            // Update status for device
+            switch (selectedDevice.getTrangThai()) {
+                case 1:
+                    Map<String, Object> borrowingResponse = new HashMap<>();
+                    borrowingResponse.put("success", false);
+                    borrowingResponse.put("message", "Device is currently being borrowed");
+                    return ResponseEntity.ok(borrowingResponse);
+                case 2:
+                    Map<String, Object> preOrderResponse = new HashMap<>();
+                    preOrderResponse.put("success", false);
+                    preOrderResponse.put("message", "Device has been pre-ordered");
+                    return ResponseEntity.ok(preOrderResponse);
+                default:
+                    usage_informationEntity usageInformation = new usage_informationEntity();
+                    usageInformation.setMaTV(memberMapper.toEntity(loggedInMember));
+                    usageInformation.setMaTB(selectedDevice);
+                    usageInformation.setTGDatcho(Instant.now());
+
+                    // Set device status
+                    selectedDevice.setTrangThai(1);
+
+                    usageInformation = usage_information_repository.save(usageInformation);
+                    selectedDevice.getThongtinsds().add(usageInformation);
+                    deviceRepository.save(selectedDevice);
+
+                    Map<String, Object> successResponse = new HashMap<>();
+                    successResponse.put("success", true);
+                    successResponse.put("message", "Borrowed successfully");
+                    return ResponseEntity.ok(successResponse);
+            }
+        } else {
+            Map<String, Object> notFoundResponse = new HashMap<>();
+            notFoundResponse.put("success", false);
+            notFoundResponse.put("message", "Device not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundResponse);
+        }
+    }
+
 
     @CrossOrigin(origins = "http://localhost:8080")
     @PostMapping("/preOrder")
@@ -124,20 +162,30 @@ public class deviceController {
                 deviceEntity selectedDevice = device.get();
 
                 //set usage information
-                usage_informationEntity usageInformation = new usage_informationEntity();
-                usageInformation.setMaTV(user);
-                usageInformation.setMaTB(selectedDevice);
-                usageInformation.setTGDatcho(preorderDate.atStartOfDay().toInstant(ZoneOffset.UTC));
-
-                //set device status
-                selectedDevice.setTrangThai(2);
-
-                // Save the usage information
-                usageInformation = usage_information_repository.save(usageInformation);
-                selectedDevice.getThongtinsds().add(usageInformation);
-                deviceRepository.save(selectedDevice);
-
-                response.put("message", "Pre-order successful");
+//                switch (selectedDevice.getTrangThai()) {
+//                    case 1:
+//                        response.put("message","Device have been borrowed");
+//                    case 2:
+//                        response.put("message","Device have been pre-order");
+//                    default:
+//                        usage_informationEntity usageInformation = new usage_informationEntity();
+//                        usageInformation.setMaTV(user);
+//                        usageInformation.setMaTB(selectedDevice);
+//                        usageInformation.setTGDatcho(preorderDate.atStartOfDay().toInstant(ZoneOffset.UTC));
+//
+//                        //set device status
+//                        selectedDevice.setTrangThai(2);
+//
+//                        // Save the usage information
+//                        usageInformation = usage_information_repository.save(usageInformation);
+//                        selectedDevice.getThongtinsds().add(usageInformation);
+//                        deviceRepository.save(selectedDevice);
+//
+//                        response.put("message", "Pre-order successful");
+//                }
+                if (selectedDevice.getTrangThai() == 1) {
+                    response.put("message", "san pham dang duoc muon");
+                }
             } else {
                 response.put("message", "Member or Device not found");
             }
