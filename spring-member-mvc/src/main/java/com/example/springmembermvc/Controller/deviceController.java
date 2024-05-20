@@ -76,7 +76,7 @@ public class deviceController {
     public ResponseEntity<?> addToCart(@PathVariable("deviceId") int deviceId, HttpSession session) {
         memberDTO loggedInMember = (memberDTO) session.getAttribute("login_response");
         if (loggedInMember == null) {
-            // If the user is not logged in, redirect to login page
+            // If the user is not logged in, return an unauthorized response
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "User not logged in");
@@ -88,27 +88,27 @@ public class deviceController {
         if (optionalDevice.isPresent()) {
             deviceEntity selectedDevice = optionalDevice.get();
 
-            // get reservation time of device
+            // Get reservation time of the device
             Optional<usage_informationEntity> usage_information = usage_information_repository.findById(selectedDevice.getId());
-            usage_informationEntity usage_information1 = usage_information.get();
-            Instant reservationTime = usage_information1.getTGDatcho();
+            if (usage_information.isPresent()) {
+                usage_informationEntity usage_information1 = usage_information.get();
+                Instant reservationTime = usage_information1.getTGDatcho();
 
-            // get instant time
-            Instant currentTime = Instant.now();
+                System.out.println(reservationTime);
+                // Get the current time
+                Instant currentTime = Instant.now();
 
-            // compare reservation time with currentTime
-            if (reservationTime != null){
-                Duration duration = Duration.between(reservationTime, currentTime);
-
-                if (duration.toHours() > 1) {
-                    selectedDevice.setTrangThai(0);
+                // Compare reservation time with the current time
+                if (reservationTime != null) {
+                    Duration duration = Duration.between(reservationTime, currentTime);
+                    if (duration.toHours() > 1) {
+                        selectedDevice.setTrangThai(0);
+                    }
                 }
+                System.out.println("ok");
             }
 
-            //checking time
-            System.out.println(java.time.LocalDate.now());
-
-            // Update status for device
+            // Update status for the device
             switch (selectedDevice.getTrangThai()) {
                 case 1:
                     Map<String, Object> borrowingResponse = new HashMap<>();
@@ -186,12 +186,14 @@ public class deviceController {
 
                         response.put("message", "Pre-order successful");
                 }
-
+//                if (selectedDevice.getTrangThai() == 1) {
+//                    response.put("message", "san pham dang duoc muon");
+//                }
             } else {
                 response.put("message", "Member or Device not found");
             }
         } catch (Exception e) {
-            response.put("message", "Failed to pre-order: " + e.getMessage());
+            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
             e.printStackTrace();
         }
         return response;
