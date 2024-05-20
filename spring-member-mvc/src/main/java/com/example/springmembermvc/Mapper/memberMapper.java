@@ -35,7 +35,32 @@ public class memberMapper {
 
     public memberDTO convertToDTO(memberEntity memberEntity) {
         memberDTO dto = new memberDTO();
+
+        dto.setMaTV(memberEntity.getId());
+        dto.setHoTen(memberEntity.getHoTen());
+        dto.setKhoa(memberEntity.getKhoa());
+        dto.setNganh(memberEntity.getNganh());
+        dto.setSDT(memberEntity.getSDT());
+        dto.setPassword(memberEntity.getPassword());
+        dto.setEmail(memberEntity.getEmail());
         return dto;
+    }
+
+    public memberEntity toEntity(memberDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+
+        memberEntity entity = new memberEntity();
+        entity.setId(dto.getMaTV());
+        entity.setEmail(dto.getEmail());
+        entity.setHoTen(dto.getHoTen());
+        entity.setKhoa(dto.getKhoa());
+        entity.setNganh(dto.getNganh());
+        entity.setPassword(dto.getPassword());
+        entity.setSDT(dto.getSDT());
+
+        return entity;
     }
 }
 

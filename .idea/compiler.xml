@@ -13,7 +13,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="spring-member-mvc" options="-parameters" />
+      <module name="spring-member-mvc" options="-parameters --add-exports java.xml/com.sun.org.apache.xalan.internal.lib=ALL-UNNAMED" />
     </option>
   </component>
 </project>

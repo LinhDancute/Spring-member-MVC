@@ -1,324 +1,276 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Shop Homepage - Start Bootstrap Template</title>
-        <!-- Favicon-->
-        <link rel="icon" th:href="@{/assets/favicon.ico}" type="image/x-icon">
-        <!-- Bootstrap icons-->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link rel="stylesheet" th:href="@{/css/styles.css}">
-    </head>
-    <body>
-
-
-
-        <!-- Navigation-->
-        <nav id ="navbar1" class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="#!">Devices</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="/category/1">Micro</a></li>
-                                <li><a class="dropdown-item" href="/category/3">Máy ảnh</a></li>
-                                <li><a class="dropdown-item" href="/category/4">Cassette</a></li>
-                                <li><a class="dropdown-item" href="/category/5">Tivi</a></li>
-                                <li><a class="dropdown-item" href="/category/6">Quạt đứng</a></li>
-                                <li><a class="dropdown-item" href="/category/2">Máy chiếu</a></li>
-                            </ul>
-                        </li>
-
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Shop Homepage - Start Bootstrap Template</title>
+    <!-- Favicon-->
+    <link rel="icon" th:href="@{/assets/favicon.ico}" type="image/x-icon">
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <!-- Pre Order Css -->
+    <link rel="stylesheet" th:href="@{/css/pre_order_form.css}">
+    <!-- SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+<!-- Navigation-->
+<nav id="navbar1" class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="#!">Devices</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="/category/1">Micro</a></li>
+                        <li><a class="dropdown-item" href="/category/3">Máy ảnh</a></li>
+                        <li><a class="dropdown-item" href="/category/4">Cassette</a></li>
+                        <li><a class="dropdown-item" href="/category/5">Tivi</a></li>
+                        <li><a class="dropdown-item" href="/category/6">Quạt đứng</a></li>
+                        <li><a class="dropdown-item" href="/category/2">Máy chiếu</a></li>
                     </ul>
+                </li>
+            </ul>
+            <form class="d-flex me-auto" method="GET" action="/search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="query">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
 
-                    <form class="d-flex me-auto" method="GET" action="/search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="query">
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
-                    <form class="d-flex">
-                        <button id="showCartBtn" class="btn btn-outline-dark" type="submit">
-                            <i class="bi-cart-fill me-1"></i>
-                            Cart
-                            <span class="badge bg-dark text-white ms-1 rounded-pill" th:text="${#lists.size(cart)}"></span>
-                        </button>
-                    </form>
-                    <li class="pe-3">
-                        <a href="/login_get">
-                            <svg class="user">
-                                <use xlink:href="#user"></use>
-                            </svg>
-                        </a>
+            <ul class="navbar-nav">
+                <li class="nav-item pe-3" th:if="${session.login_response != null}">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-person-fill"></i>
+                        <span th:text="${session.login_response.hoTen}"></span>
+                    </a>
+                    <a class="nav-link" href="/logout">Đăng xuất</a>
+                </li>
+                <li class="nav-item pe-3" th:if="${session.login_response == null}">
+                    <a class="nav-link" href="/login_get">
+                        <i class="bi bi-person-fill"></i>
                         Đăng nhập|Đăng kí
-                    </li>
-                </div>
-            </div>
-        </nav>
-        <!-- Header-->
-        <header class="bg-dark py-5">
-            <div class="container px-4 px-lg-5 my-5">
-                <div class="text-center text-white">
-                    <h1 class="display-4 fw-bolder">Equipment borrowing service</h1>
-                    <p class="lead fw-normal text-white-50 mb-0">Contact: 0384018475</p>
-                </div>
-            </div>
-        </header>
-        <!-- Section-->
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Equipment borrowing service</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Contact: 0384018475</p>
+        </div>
+    </div>
+</header>
 
-
-
-
-
-        <section class="py-5">
-            <div class="container px-4 px-lg-5 mt-5">
-                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                    <!-- Loop through devices and display each one -->
-                    <div class="col mb-5" th:each="device : ${devices}">
-                        <div class="card h-100">
-                            <!-- Product image-->
-                            <img class="card-img-top" th:src="${device.HinhanhTB}" alt="..." />
-                            <!-- Product details-->
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder" th:text="${device.TenTB}">Device Name</h5>
-                                    <!-- Product price-->
-<!--                                    <span th:text="200000"></span>-->
-                                </div>
-                            </div>
-                            <!-- Product actions-->
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <a class="btn btn-outline-dark mt-auto add-to-cart-btn" th:href="'/addToCart/' + ${device.id}">Reservations</a>
-                            </div>
-
+<!-- Section-->
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            <!-- Loop through devices and display each one -->
+            <div class="col mb-5" th:each="device : ${devices}">
+                <div class="card h-100">
+                    <!-- Product image-->
+                    <img class="card-img-top" th:src="${device.hinhanhTB}" alt="..." />
+                    <!-- Product details-->
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <!-- Product name-->
+                            <h5 class="fw-bolder" th:text="${device.tenTB}">Device Name</h5>
                         </div>
                     </div>
-                </div>
-
-
-                <!-- Pagination -->
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
-                        <li th:class="${currentPage == 0 ? 'page-item disabled' : 'page-item'}">
-                            <a class="page-link" th:href="@{/index(page=0)}">First</a>
-                        </li>
-                        <li th:class="${currentPage == 0 ? 'page-item disabled' : 'page-item'}">
-                            <a class="page-link" th:href="@{/index(page=${currentPage - 1})}">Previous</a>
-                        </li>
-                        <!-- Trỏ về trang index.html với tham số trang tương ứng -->
-                        <li th:class="${currentPage + 1 == totalPages ? 'page-item disabled' : 'page-item'}">
-                            <a class="page-link" th:href="@{/index(page=${currentPage + 1})}">Next</a>
-                        </li>
-                        <!-- Trỏ về trang index.html với tham số là trang cuối cùng -->
-                        <li th:class="${currentPage + 1 == totalPages ? 'page-item disabled' : 'page-item'}">
-                            <a class="page-link" th:href="@{/index(page=${totalPages - 1})}">Last</a>
-                        </li>
-                    </ul>
-                </nav>
-
-
-
-            </div>
-        </section>
-
-
-
-
-        <div id="cart" class="container mt-5 p-3 rounded cart " style="display: none;">
-
-            <div class="container mt-5 p-3 rounded cart">
-                <div class="row no-gutters">
-                    <div class="col-md-8">
-                        <div class="product-details mr-2">
-                            <div class="d-flex flex-row align-items-center"><i class="fa fa-long-arrow-left"></i><span class="ml-2">Reservations cart</span></div>
-                            <hr>
-<!--                            <h6 class="mb-0">Shopping cart</h6>-->
-                            <span>You have <span th:text="${cart.size()}"></span> items in your cart</span>
-                                <div class="d-flex flex-row align-items-center"><span class="text-black-50"></span>
-                                    <div class="price ml-2"><span class="mr-1"></span><i class="fa fa-angle-down"></i></div>
-                                </div>
-                            </div>
-
-                        <div class="cart-items">
-                            <div th:each="item : ${cart}">
-                                <div class="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
-                                    <div class="d-flex flex-row">
-                                        <img class="rounded" th:src="${item.HinhanhTB}" width="40">
-                                        <div class="ml-2">
-                                            <span class="font-weight-bold d-block" th:text="${item.TenTB}"></span>
-<!--                                            <span class="spec" th:text="${item.spec}"></span>-->
-                                        </div>
-                                    </div>
-                                    <div class="d-flex flex-row align-items-center">
-<!--                                        <span class="d-block" th:text="${item.quantity}"></span>-->
-<!--                                        <span class="d-block ml-5 font-weight-bold" th:text="${item.price}"></span>-->
-                                        <i class="fa fa-trash-o ml-3 text-black-50"></i>
-                                    </div>
-                                </div>
-                            </div>
+                    <!-- Product actions-->
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="d-flex justify-content-between">
+                            <!-- Borrow button -->
+                            <a class="btn btn-outline-dark mt-auto borrow-btn" th:href="@{/borrow/{deviceId}(deviceId=${device.id})}">Borrow</a>
+                            <!-- Pre Order button with data attributes -->
+                            <button class="btn btn-outline-primary mt-auto pre-order-btn"
+                                    th:data-device-id="${device.id}"
+                                    th:data-device-name="${device.tenTB}">Pre Order</button>
                         </div>
                     </div>
-
-
-
-                    <div class="col-md-4">
-                        <div class="payment-info">
-                            <form id="confirmForm" method="post" action="/confirm">
-                                <div>
-                                    <label class="credit-card-label">Name</label>
-                                    <input type="text" class="form-control credit-inputs" id="name" name="name" placeholder="Name" required>
-                                </div>
-                                <div>
-                                    <label class="credit-card-label">MSSV</label>
-                                    <input type="text" class="form-control credit-inputs" id="MSSV" name="MSSV" placeholder="0000000000" required>
-                                </div>
-                                <hr class="line">
-                                <button class="btn btn-primary btn-block d-flex justify-content-between mt-3" type="button" onclick="handleConfirm()">
-                                    <span>Confirm<i class="fa fa-long-arrow-right ml-1"></i></span>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-
-
-
                 </div>
             </div>
         </div>
 
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <li th:class="${currentPage == 0 ? 'page-item disabled' : 'page-item'}">
+                    <a class="page-link" th:href="@{/index(page=0)}">First</a>
+                </li>
+                <li th:class="${currentPage == 0 ? 'page-item disabled' : 'page-item'}">
+                    <a class="page-link" th:href="@{/index(page=${currentPage - 1})}">Previous</a>
+                </li>
+                <li th:class="${currentPage + 1 == totalPages ? 'page-item disabled' : 'page-item'}">
+                    <a class="page-link" th:href="@{/index(page=${currentPage + 1})}">Next</a>
+                </li>
+                <li th:class="${currentPage + 1 == totalPages ? 'page-item disabled' : 'page-item'}">
+                    <a class="page-link" th:href="@{/index(page=${totalPages - 1})}">Last</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</section>
 
+<div id="preorderOverlay" class="overlay">
+    <div class="preorder-form-container">
+        <h3>Pre Order</h3>
+        <form id="preorderForm" class="preorder-form" method="post" action="/preOrder">
+            <input type="hidden" id="preorderProductId" name="productId">
+            <label class="overlay-label">Name</label>
+            <input type="text" id="nameID" name="name" placeholder="Your Name" th:value="${session.login_response.hoTen}" readonly>
+            <label class="overlay-label">Student ID</label>
+            <input type="text" id="studentID" name="studentID" placeholder="Your Student ID" th:value="${session.login_response.maTV}" readonly>
+            <label class="overlay-label">Device Name</label>
+            <input type="text" id="deviceName" name="deviceName" readonly>
+            <label class="overlay-label">Borrow Day</label>
+            <input type="date" id="preorderDate" name="preorderDate" required>
+            <button type="button" onclick="submitPreOrder()">Submit</button>
+            <button type="button" class="close-btn" onclick="closePreOrderForm()">Cancel</button>
+        </form>
+    </div>
+</div>
 
+<!-- Footer-->
+<footer class="py-5 bg-dark">
+    <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2021</p></div>
+</footer>
 
-
-
-        <!-- Footer-->
-        <footer class="py-5 bg-dark">
-            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2023</p></div>
-        </footer>
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-        <script th:src="@{/js/js/scripts.js}"></script>
-    </body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+<!-- Core theme JS-->
+<script th:src="@{/js/scripts.js}"></script>
+</body>
 </html>
-
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Lấy tham chiếu đến nút giỏ hàng
-        const cartButton = document.getElementById('showCartBtn');
-        // Lấy tham chiếu đến giỏ hàng
-        const cart = document.getElementById('cart');
-        // Lấy tham chiếu đến các phần tử khác cần ẩn
-        const elementsToHide = document.querySelectorAll('header, section');
+        // Borrow button functionality
+        const borrowButtons = document.querySelectorAll(".borrow-btn");
 
-        // Sự kiện click vào nút giỏ hàng
-        cartButton.addEventListener('click', function(event) {
-            // Ngăn chặn hành động mặc định của nút
-            event.preventDefault();
+        borrowButtons.forEach(button => {
+            button.addEventListener("click", function(event) {
+                event.preventDefault();
+                const url = button.getAttribute("href");
 
-            // Toggle hiển thị/ẩn giỏ hàng
-            if (cart.style.display === 'none' || cart.style.display === '') {
-                cart.style.display = 'block';
-                elementsToHide.forEach(element => {
-                    element.style.display = 'none';
-                });
-            } else {
-                cart.style.display = 'none';
-                elementsToHide.forEach(element => {
-                    element.style.display = 'block';
-                });
-            }
+                fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        let icon, title, text;
+                        if (data.success) {
+                            icon = 'success';
+                            title = 'Success';
+                            text = data.message || 'Borrowed successfully!';
+                        } else {
+                            icon = 'error';
+                            title = 'Error';
+                            text = data.message || 'Failed to borrow.';
+                        }
+                        Swal.fire({
+                            icon: icon,
+                            title: title,
+                            text: text,
+                            confirmButtonText: 'OK'
+                        });
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while borrowing.',
+                            confirmButtonText: 'OK'
+                        });
+                        console.error('Error:', error);
+                    });
+            });
+        });
+
+        // Pre Order button functionality
+        const preOrderButtons = document.querySelectorAll(".pre-order-btn");
+
+        preOrderButtons.forEach(button => {
+            button.addEventListener("click", function(event) {
+                event.preventDefault();
+                const deviceId = button.getAttribute("data-device-id");
+                const deviceName = button.getAttribute("data-device-name");
+
+                document.getElementById("preorderProductId").value = deviceId;
+                document.getElementById("deviceName").value = deviceName;
+
+                document.getElementById("preorderOverlay").style.display = "block";
+            });
         });
     });
 
-
-    // async function handleConfirm() {
-    //     const name = document.getElementById('name').value;
-    //     const MSSV = document.getElementById('MSSV').value;
-    //
-    //     if (!name || !MSSV) {
-    //         alert('Please fill in all fields');
-    //         return;
-    //     }
-    //
-    //     // Check MSSV in the database
-    //     const response = await fetch(`/api/checkMSSV?MSSV=${MSSV}`);
-    //     const data = await response.json();
-    //
-    //     if (!data.exists) {
-    //         alert('MSSV does not exist');
-    //         return;
-    //     }
-    //
-    //     // Send the data to the server
-    //     const formData = new FormData(document.getElementById('confirmForm'));
-    //     const requestOptions = {
-    //         method: 'POST',
-    //         body: formData
-    //     };
-    //
-    //     const confirmResponse = await fetch('/confirm', requestOptions);
-    //     if (confirmResponse.ok) {
-    //         alert('Data has been successfully saved');
-    //         window.location.reload();
-    //         // You can add additional actions here, like redirecting the user or updating the UI
-    //     } else {
-    //         alert('There was an error saving the data');
-    //         // console.error('Error:', error);
-    //     }
-    // }
-
-    function handleConfirm() {
-        const name = document.getElementById('name').value;
-        const MSSV = document.getElementById('MSSV').value;
-
-        if (!name || !MSSV) {
-            alert('Please fill in all fields');
-            return;
-        }
-
-        // Check MSSV in the database
+    // Handle Pre Order Submit
+    function submitPreOrder() {
         $.ajax({
-            type: 'GET',
-            url: `/api/checkMSSV?MSSV=${MSSV}`,
-            success: function(data) {
-                if (!data.exists) {
-                    alert('MSSV does not exist');
-                    return;
-                }
-
-                // Send the data to the server
-                $.ajax({
-                    type: 'POST',
-                    url: '/confirm',
-                    data: $('#confirmForm').serialize(),
-                    success: function(response) {
-                        alert('Data has been successfully saved');
-                        window.location.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        alert('There was an error saving the data');
-                        console.error(xhr.responseText);
+            type: 'POST',
+            url:'/preOrder',
+            data: $('#preorderForm').serialize(),
+            success: function(response) {
+                console.log('Pre-order response:', response);
+                if (response && typeof response.message === 'string') {
+                    if (response.message === "Pre-order successful") {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Pre-order successful',
+                            text: 'Your pre-order has been placed successfully!',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/';
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message,
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/';
+                        });
                     }
-                });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Phản hồi từ máy chủ không đúng định dạng',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = '/';
+                    });
+                }
             },
             error: function(xhr, status, error) {
-                alert('Error checking MSSV');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'There was an error saving the pre-order',
+                    confirmButtonText: 'OK'
+                });
                 console.error(xhr.responseText);
             }
         });
     }
 
-
-
+    function closePreOrderForm() {
+        document.getElementById("preorderOverlay").style.display = "none";
+    }
 </script>

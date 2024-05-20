@@ -55,10 +55,12 @@ public class memberServiceImpl implements memberService {
         memberEntity.setPassword(passwordEncoder.encode(memberLoginDTO.getPassword()));
 
         Optional<memberEntity> optionalMemberEntity = memberRepository.findById(memberLoginDTO.getMaTV());
+
         if (optionalMemberEntity.isPresent()) {
             memberEntity existingMember = optionalMemberEntity.get();
             if (passwordEncoder.matches(memberLoginDTO.getPassword(), existingMember.getPassword())) {
-                return memberMapper.convertToDTO(existingMember);
+                memberDTO dto =  memberMapper.convertToDTO(existingMember);
+                return dto;
             }
         }
         return null;

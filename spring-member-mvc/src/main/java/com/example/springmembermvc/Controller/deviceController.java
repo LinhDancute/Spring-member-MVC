@@ -1,12 +1,17 @@
 package com.example.springmembermvc.Controller;
 
-import com.example.springmembermvc.Model.DTO.device.deviceDTO;
+import com.example.springmembermvc.Mapper.deviceMapper;
+import com.example.springmembermvc.Mapper.memberMapper;
+import com.example.springmembermvc.Model.DTO.member.memberDTO;
 import com.example.springmembermvc.Model.Entity.deviceEntity;
 import com.example.springmembermvc.Model.Entity.memberEntity;
 import com.example.springmembermvc.Model.Entity.usage_informationEntity;
 import com.example.springmembermvc.Repository.memberRespository;
 import com.example.springmembermvc.Repository.usage_informationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -17,8 +22,13 @@ import com.example.springmembermvc.Service.deviceService;
 
 import com.example.springmembermvc.Repository.deviceRepository;
 
+import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.*;
+
+import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.time;
 
 @Controller
 public class deviceController {
@@ -27,11 +37,15 @@ public class deviceController {
     private final memberRespository memberRespository;
 
     private final usage_informationRepository usage_information_repository;
+    private final com.example.springmembermvc.Mapper.memberMapper memberMapper;
+    private final com.example.springmembermvc.Mapper.deviceMapper deviceMapper;
 
-    public deviceController(deviceRepository deviceRepository, memberRespository memberRespository, usage_informationRepository usage_information_repository) {
+    public deviceController(deviceRepository deviceRepository, memberRespository memberRespository, usage_informationRepository usage_information_repository, memberMapper memberMapper, deviceMapper deviceMapper) {
         this.deviceRepository = deviceRepository;
         this.memberRespository = memberRespository;
         this.usage_information_repository = usage_information_repository;
+        this.memberMapper = memberMapper;
+        this.deviceMapper = deviceMapper;
     }
 
     // Khởi tạo mảng Cart
@@ -56,69 +70,128 @@ public class deviceController {
         return home(model, page); // Chuyển hướng yêu cầu đến phương thức home
     }
 
-    // Xử lý thêm thiết bị vào giỏ hàng
-    @GetMapping("/addToCart/{MaTB}")
-    public String addToCart(@PathVariable int MaTB) {
-        // Lấy thiết bị từ cơ sở dữ liệu dựa vào deviceId
-        Optional<deviceEntity> optionalDevice = deviceRepository.findById(MaTB);
+    @GetMapping("/borrow/{deviceId}")
+    public ResponseEntity<?> addToCart(@PathVariable("deviceId") int deviceId, HttpSession session) {
+        memberDTO loggedInMember = (memberDTO) session.getAttribute("login_response");
+        if (loggedInMember == null) {
+            // If the user is not logged in, redirect to login page
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "User not logged in");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
+        Optional<deviceEntity> optionalDevice = deviceRepository.findById(deviceId);
+
         if (optionalDevice.isPresent()) {
             deviceEntity selectedDevice = optionalDevice.get();
-            // Kiểm tra xem thiết bị đã tồn tại trong giỏ hàng chưa
-            boolean found = false;
-            for (deviceEntity item : cart) {
-                if (item.getId().equals(selectedDevice.getId())) {
-                    // Nếu thiết bị đã tồn tại trong giỏ hàng, tăng số lượng lên 1
-                    found = true;
-                    break;
+
+            // get reservation time of device
+            Optional<usage_informationEntity> usage_information = usage_information_repository.findById(selectedDevice.getId());
+            usage_informationEntity usage_information1 = usage_information.get();
+            Instant reservationTime = usage_information1.getTGDatcho();
+
+            // get instant time
+            Instant currentTime = Instant.now();
+
+            // compare reservation time with currentTime
+            if (reservationTime != null){
+                Duration duration = Duration.between(reservationTime, currentTime);
+
+                if (duration.toHours() > 1) {
+                    selectedDevice.setTrangThai(0);
                 }
             }
-            // Nếu thiết bị chưa tồn tại trong giỏ hàng, thêm vào giỏ hàng và đặt số lượng là 1
-            if (!found) {
-                cart.add(selectedDevice);
+
+            //checking time
+            System.out.println(java.time.LocalDate.now());
+
+            // Update status for device
+            switch (selectedDevice.getTrangThai()) {
+                case 1:
+                    Map<String, Object> borrowingResponse = new HashMap<>();
+                    borrowingResponse.put("success", false);
+                    borrowingResponse.put("message", "Device is currently being borrowed");
+                    return ResponseEntity.ok(borrowingResponse);
+                case 2:
+                    Map<String, Object> preOrderResponse = new HashMap<>();
+                    preOrderResponse.put("success", false);
+                    preOrderResponse.put("message", "Device has been pre-ordered");
+                    return ResponseEntity.ok(preOrderResponse);
+                default:
+                    usage_informationEntity usageInformation = new usage_informationEntity();
+                    usageInformation.setMaTV(memberMapper.toEntity(loggedInMember));
+                    usageInformation.setMaTB(selectedDevice);
+                    usageInformation.setTGDatcho(Instant.now());
+
+                    // Set device status
+                    selectedDevice.setTrangThai(1);
+
+                    usageInformation = usage_information_repository.save(usageInformation);
+                    selectedDevice.getThongtinsds().add(usageInformation);
+                    deviceRepository.save(selectedDevice);
+
+                    Map<String, Object> successResponse = new HashMap<>();
+                    successResponse.put("success", true);
+                    successResponse.put("message", "Borrowed successfully");
+                    return ResponseEntity.ok(successResponse);
             }
+        } else {
+            Map<String, Object> notFoundResponse = new HashMap<>();
+            notFoundResponse.put("success", false);
+            notFoundResponse.put("message", "Device not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundResponse);
         }
-        // Chuyển hướng người dùng đến trang chính
-        return "redirect:/";
-    }
-
-    // Endpoint để trả về trang giỏ hàng
-    @GetMapping("/cart")
-    public String viewCart(Model model) {
-        model.addAttribute("cartItems", cart);
-        return "cart";
-    }
-
-    // Getter cho Cart
-    @ModelAttribute("cart")
-    public List<deviceEntity> getCart() {
-        return cart;
     }
 
 
-    @PostMapping("/confirm")
+    @CrossOrigin(origins = "http://localhost:8080")
+    @PostMapping("/preOrder")
     @ResponseBody
-    public Map<String, String> confirm(@RequestParam String name, @RequestParam String MSSV, Model model) {
-        Map<String, String> response = new HashMap<>();
+    public Map<String, Object> handlePreOrder(
+            @RequestParam("productId") int productId,
+            @RequestParam("studentID") String studentID,
+            @RequestParam(value = "preorderDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate preorderDate) {
+
+        Map<String, Object> response = new HashMap<>();
         try {
-            int maTV = Integer.parseInt(MSSV);
-            Optional<memberEntity> optionalMember = memberRespository.findById(maTV);
-            if (optionalMember.isPresent()) {
-                memberEntity foundMember = optionalMember.get();
-                for (deviceEntity d : cart) {
-                    usage_informationEntity info = new usage_informationEntity();
-                    info.setId(1);
-                    info.setMaTV(foundMember);
-                    info.setTGVao(Instant.now());
-                    // Lưu thông tin vào cơ sở dữ liệu
-                    usage_information_repository.save(info);
+            Optional<memberEntity> optionalMember = memberRespository.findById(Integer.parseInt(studentID));
+            Optional<deviceEntity> device = deviceRepository.findById(productId);
+
+            if (optionalMember.isPresent() && device.isPresent()) {
+                memberEntity user = optionalMember.get();
+                deviceEntity selectedDevice = device.get();
+
+                //set usage information
+//                switch (selectedDevice.getTrangThai()) {
+//                    case 1:
+//                        response.put("message","Device have been borrowed");
+//                    case 2:
+//                        response.put("message","Device have been pre-order");
+//                    default:
+//                        usage_informationEntity usageInformation = new usage_informationEntity();
+//                        usageInformation.setMaTV(user);
+//                        usageInformation.setMaTB(selectedDevice);
+//                        usageInformation.setTGDatcho(preorderDate.atStartOfDay().toInstant(ZoneOffset.UTC));
+//
+//                        //set device status
+//                        selectedDevice.setTrangThai(2);
+//
+//                        // Save the usage information
+//                        usageInformation = usage_information_repository.save(usageInformation);
+//                        selectedDevice.getThongtinsds().add(usageInformation);
+//                        deviceRepository.save(selectedDevice);
+//
+//                        response.put("message", "Pre-order successful");
+//                }
+                if (selectedDevice.getTrangThai() == 1) {
+                    response.put("message", "san pham dang duoc muon");
                 }
-                response.put("message", "Lưu thông tin thành công");
-                cart.clear();
             } else {
-                response.put("message", "MSSV không tồn tại");
+                response.put("message", "Member or Device not found");
             }
         } catch (Exception e) {
-            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
+            response.put("message", "Failed to pre-order: " + e.getMessage());
             e.printStackTrace();
         }
         return response;
