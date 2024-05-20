@@ -2,6 +2,7 @@ package com.example.springmembermvc.Controller;
 
 import com.example.springmembermvc.Mapper.deviceMapper;
 import com.example.springmembermvc.Mapper.memberMapper;
+import com.example.springmembermvc.Model.DTO.device.deviceDTO;
 import com.example.springmembermvc.Model.DTO.member.memberDTO;
 import com.example.springmembermvc.Model.Entity.deviceEntity;
 import com.example.springmembermvc.Model.Entity.memberEntity;
@@ -9,6 +10,7 @@ import com.example.springmembermvc.Model.Entity.usage_informationEntity;
 import com.example.springmembermvc.Repository.memberRespository;
 import com.example.springmembermvc.Repository.usage_informationRepository;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -163,30 +165,28 @@ public class deviceController {
                 deviceEntity selectedDevice = device.get();
 
                 //set usage information
-//                switch (selectedDevice.getTrangThai()) {
-//                    case 1:
-//                        response.put("message","Device have been borrowed");
-//                    case 2:
-//                        response.put("message","Device have been pre-order");
-//                    default:
-//                        usage_informationEntity usageInformation = new usage_informationEntity();
-//                        usageInformation.setMaTV(user);
-//                        usageInformation.setMaTB(selectedDevice);
-//                        usageInformation.setTGDatcho(preorderDate.atStartOfDay().toInstant(ZoneOffset.UTC));
-//
-//                        //set device status
-//                        selectedDevice.setTrangThai(2);
-//
-//                        // Save the usage information
-//                        usageInformation = usage_information_repository.save(usageInformation);
-//                        selectedDevice.getThongtinsds().add(usageInformation);
-//                        deviceRepository.save(selectedDevice);
-//
-//                        response.put("message", "Pre-order successful");
-//                }
-                if (selectedDevice.getTrangThai() == 1) {
-                    response.put("message", "san pham dang duoc muon");
+                switch (selectedDevice.getTrangThai()) {
+                    case 1:
+                        response.put("message","Device have been borrowed");
+                    case 2:
+                        response.put("message","Device have been pre-order");
+                    default:
+                        usage_informationEntity usageInformation = new usage_informationEntity();
+                        usageInformation.setMaTV(user);
+                        usageInformation.setMaTB(selectedDevice);
+                        usageInformation.setTGDatcho(preorderDate.atStartOfDay().toInstant(ZoneOffset.UTC));
+
+                        //set device status
+                        selectedDevice.setTrangThai(2);
+
+                        // Save the usage information
+                        usageInformation = usage_information_repository.save(usageInformation);
+                        selectedDevice.getThongtinsds().add(usageInformation);
+                        deviceRepository.save(selectedDevice);
+
+                        response.put("message", "Pre-order successful");
                 }
+
             } else {
                 response.put("message", "Member or Device not found");
             }
