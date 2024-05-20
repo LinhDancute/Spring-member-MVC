@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import com.example.springmembermvc.Service.deviceService;
 
 import com.example.springmembermvc.Repository.deviceRepository;
 
@@ -73,7 +74,7 @@ public class deviceController {
     public ResponseEntity<?> addToCart(@PathVariable("deviceId") int deviceId, HttpSession session) {
         memberDTO loggedInMember = (memberDTO) session.getAttribute("login_response");
         if (loggedInMember == null) {
-            // If the user is not logged in, redirect to login page
+            // If the user is not logged in, return an unauthorized response
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "User not logged in");
@@ -85,27 +86,27 @@ public class deviceController {
         if (optionalDevice.isPresent()) {
             deviceEntity selectedDevice = optionalDevice.get();
 
-            // get reservation time of device
+            // Get reservation time of the device
             Optional<usage_informationEntity> usage_information = usage_information_repository.findById(selectedDevice.getId());
-            usage_informationEntity usage_information1 = usage_information.get();
-            Instant reservationTime = usage_information1.getTGDatcho();
+            if (usage_information.isPresent()) {
+                usage_informationEntity usage_information1 = usage_information.get();
+                Instant reservationTime = usage_information1.getTGDatcho();
 
-            // get instant time
-            Instant currentTime = Instant.now();
+                System.out.println(reservationTime);
+                // Get the current time
+                Instant currentTime = Instant.now();
 
-            // compare reservation time with currentTime
-            if (reservationTime != null){
-                Duration duration = Duration.between(reservationTime, currentTime);
-
-                if (duration.toHours() > 1) {
-                    selectedDevice.setTrangThai(0);
+                // Compare reservation time with the current time
+                if (reservationTime != null) {
+                    Duration duration = Duration.between(reservationTime, currentTime);
+                    if (duration.toHours() > 1) {
+                        selectedDevice.setTrangThai(0);
+                    }
                 }
+                System.out.println("ok");
             }
 
-            //checking time
-            System.out.println(java.time.LocalDate.now());
-
-            // Update status for device
+            // Update status for the device
             switch (selectedDevice.getTrangThai()) {
                 case 1:
                     Map<String, Object> borrowingResponse = new HashMap<>();
@@ -162,39 +163,41 @@ public class deviceController {
                 deviceEntity selectedDevice = device.get();
 
                 //set usage information
-//                switch (selectedDevice.getTrangThai()) {
-//                    case 1:
-//                        response.put("message","Device have been borrowed");
-//                    case 2:
-//                        response.put("message","Device have been pre-order");
-//                    default:
-//                        usage_informationEntity usageInformation = new usage_informationEntity();
-//                        usageInformation.setMaTV(user);
-//                        usageInformation.setMaTB(selectedDevice);
-//                        usageInformation.setTGDatcho(preorderDate.atStartOfDay().toInstant(ZoneOffset.UTC));
-//
-//                        //set device status
-//                        selectedDevice.setTrangThai(2);
-//
-//                        // Save the usage information
-//                        usageInformation = usage_information_repository.save(usageInformation);
-//                        selectedDevice.getThongtinsds().add(usageInformation);
-//                        deviceRepository.save(selectedDevice);
-//
-//                        response.put("message", "Pre-order successful");
-//                }
-                if (selectedDevice.getTrangThai() == 1) {
-                    response.put("message", "san pham dang duoc muon");
+                switch (selectedDevice.getTrangThai()) {
+                    case 1:
+                        response.put("message","Device have been borrowed");
+                    case 2:
+                        response.put("message","Device have been pre-order");
+                    default:
+                        usage_informationEntity usageInformation = new usage_informationEntity();
+                        usageInformation.setMaTV(user);
+                        usageInformation.setMaTB(selectedDevice);
+                        usageInformation.setTGDatcho(preorderDate.atStartOfDay().toInstant(ZoneOffset.UTC));
+
+                        //set device status
+                        selectedDevice.setTrangThai(2);
+
+                        // Save the usage information
+                        usageInformation = usage_information_repository.save(usageInformation);
+                        selectedDevice.getThongtinsds().add(usageInformation);
+                        deviceRepository.save(selectedDevice);
+
+                        response.put("message", "Pre-order successful");
                 }
+//                if (selectedDevice.getTrangThai() == 1) {
+//                    response.put("message", "san pham dang duoc muon");
+//                }
             } else {
                 response.put("message", "Member or Device not found");
             }
         } catch (Exception e) {
-            response.put("message", "Failed to pre-order: " + e.getMessage());
+            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
             e.printStackTrace();
         }
         return response;
     }
+
+
 
 
     // API endpoint to check if MSSV exists
